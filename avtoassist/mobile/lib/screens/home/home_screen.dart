@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
 import 'package:avtoassist/providers/theme_provider.dart';
 import 'package:avtoassist/providers/locale_provider.dart';
+import 'package:avtoassist/services/api_service.dart';
 import 'package:avtoassist/l10n/app_strings.dart';
 import 'package:avtoassist/screens/home/client_home.dart';
 import 'package:avtoassist/screens/home/provider_home.dart';
@@ -161,6 +162,18 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
+          // Server manzili
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.dns, color: AppTheme.primaryColor),
+              title: Text(loc.t('server_url')),
+              subtitle: Text(ApiService().baseUrl),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showServerUrlDialog(context, loc),
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // Tungi rejim
           Card(
             child: SwitchListTile(
@@ -216,6 +229,49 @@ class ProfilePage extends StatelessWidget {
               );
             }).toList(),
           ),
+        );
+      },
+    );
+  }
+
+  void _showServerUrlDialog(BuildContext context, LocaleProvider loc) {
+    final controller = TextEditingController(text: ApiService().baseUrl);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(loc.t('server_url')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: controller,
+                keyboardType: TextInputType.url,
+                autocorrect: false,
+                decoration: InputDecoration(
+                  hintText: loc.t('server_url_hint'),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(loc.t('close')),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                await ApiService().setServerUrl(controller.text);
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(loc.t('server_url_saved'))),
+                  );
+                }
+              },
+              child: Text(loc.t('save')),
+            ),
+          ],
         );
       },
     );

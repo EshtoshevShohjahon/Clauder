@@ -10,6 +10,33 @@ class ApiService {
 
   String? _token;
 
+  // Server manzili (foydalanuvchi ilovada o'zgartira oladi)
+  static const String _serverUrlKey = 'server_url';
+  String? _baseUrlOverride;
+
+  /// Joriy server manzili (override bo'lsa - o'sha, bo'lmasa - default)
+  String get baseUrl => (_baseUrlOverride != null && _baseUrlOverride!.isNotEmpty)
+      ? _baseUrlOverride!
+      : AppConstants.baseUrl;
+
+  /// Saqlangan server manzilini yuklash (ilova ochilganda)
+  Future<void> loadServerUrl() async {
+    final prefs = await SharedPreferences.getInstance();
+    _baseUrlOverride = prefs.getString(_serverUrlKey);
+  }
+
+  /// Server manzilini o'rnatish (Profil sozlamasidan)
+  Future<void> setServerUrl(String url) async {
+    final cleaned = url.trim();
+    _baseUrlOverride = cleaned.isEmpty ? null : cleaned;
+    final prefs = await SharedPreferences.getInstance();
+    if (cleaned.isEmpty) {
+      await prefs.remove(_serverUrlKey);
+    } else {
+      await prefs.setString(_serverUrlKey, cleaned);
+    }
+  }
+
   Future<void> setToken(String token) async {
     _token = token;
     final prefs = await SharedPreferences.getInstance();
@@ -45,7 +72,7 @@ class ApiService {
     bool needsAuth = false,
   }) async {
     try {
-      final url = Uri.parse('${AppConstants.baseUrl}$endpoint');
+      final url = Uri.parse('${baseUrl}$endpoint');
       final response = await http.post(
         url,
         headers: _getHeaders(needsAuth: needsAuth),
@@ -74,7 +101,7 @@ class ApiService {
     bool needsAuth = false,
   }) async {
     try {
-      var url = Uri.parse('${AppConstants.baseUrl}$endpoint');
+      var url = Uri.parse('${baseUrl}$endpoint');
       if (queryParams != null) {
         url = url.replace(queryParameters: queryParams);
       }
@@ -106,7 +133,7 @@ class ApiService {
     bool needsAuth = false,
   }) async {
     try {
-      final url = Uri.parse('${AppConstants.baseUrl}$endpoint');
+      final url = Uri.parse('${baseUrl}$endpoint');
       final response = await http.put(
         url,
         headers: _getHeaders(needsAuth: needsAuth),

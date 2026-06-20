@@ -6,10 +6,14 @@ import 'package:avtoassist/providers/order_provider.dart';
 import 'package:avtoassist/providers/theme_provider.dart';
 import 'package:avtoassist/providers/places_provider.dart';
 import 'package:avtoassist/providers/locale_provider.dart';
+import 'package:avtoassist/services/api_service.dart';
 import 'package:avtoassist/screens/splash_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Saqlangan server manzilini yuklash
+  await ApiService().loadServerUrl();
   runApp(const AvtoHelpApp());
 }
 
