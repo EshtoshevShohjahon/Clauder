@@ -8,7 +8,12 @@ class AppConstants {
   // Android emulator uchun:
   // static const String baseUrl = 'http://10.0.2.2:3000/api';
   // static const String wsUrl = 'ws://10.0.2.2:3000';
-  
+
+  // Ilova versiyasi (in-app updater uchun)
+  // Yangi APK chiqarganda bu raqamni oshiring (backend latest_build bilan solishtiriladi)
+  static const int appVersionCode = 1;
+  static const String appVersionName = '1.0.0';
+
   // Endpoints
   static const String authRegister = '/auth/register';
   static const String authLogin = '/auth/login';

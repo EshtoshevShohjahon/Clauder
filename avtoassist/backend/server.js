@@ -15,6 +15,7 @@ const providerRoutes = require('./routes/providers');
 const userRoutes = require('./routes/users');
 const vehicleRoutes = require('./routes/vehicles');
 const placesRoutes = require('./routes/places');
+const versionRoutes = require('./routes/version');
 
 const app = express();
 const server = http.createServer(app);
@@ -76,6 +77,7 @@ app.use('/api/providers', providerRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/places', placesRoutes);
+app.use('/api/version', versionRoutes);
 
 // WebSocket connection handler
 io.on('connection', (socket) => {

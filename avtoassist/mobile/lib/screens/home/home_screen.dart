@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
 import 'package:avtoassist/providers/theme_provider.dart';
 import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/services/api_service.dart';
+import 'package:avtoassist/services/update_service.dart';
 import 'package:avtoassist/l10n/app_strings.dart';
 import 'package:avtoassist/screens/home/client_home.dart';
 import 'package:avtoassist/screens/home/provider_home.dart';
@@ -19,6 +21,44 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkUpdate());
+  }
+
+  Future<void> _checkUpdate() async {
+    final info = await UpdateService().checkForUpdate();
+    if (info == null || !mounted) return;
+    final loc = context.read<LocaleProvider>();
+    showDialog(
+      context: context,
+      barrierDismissible: !info.force,
+      builder: (ctx) => AlertDialog(
+        title: Text('${loc.t('update_available')}  ${info.version}'),
+        content: Text(
+          info.changelog.isNotEmpty ? info.changelog : loc.t('update_available'),
+        ),
+        actions: [
+          if (!info.force)
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(loc.t('later')),
+            ),
+          ElevatedButton(
+            onPressed: () async {
+              final uri = Uri.parse(info.apkUrl);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              }
+            },
+            child: Text(loc.t('update_now')),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
