@@ -19,6 +19,23 @@ async function runMigrations() {
       );
     `);
 
+    // Agar baza AVVAL sozlangan bo'lsa (users jadvali bor, lekin tracking yo'q edi),
+    // eski migratsiyalarni (001-003) "bajarilgan" deb belgilaymiz - ular qayta
+    // ishlamasin (aks holda seed data dublikat xatosini beradi).
+    const trackedCount = await db.query('SELECT COUNT(*)::int AS c FROM schema_migrations');
+    if (trackedCount.rows[0].c === 0) {
+      const usersExists = await db.query("SELECT to_regclass('public.users') AS t");
+      if (usersExists.rows[0].t !== null) {
+        console.log('ℹ️  Baza avval sozlangan - eski migratsiyalar belgilanmoqda...\n');
+        for (const f of ['001_create_tables.sql', '002_seed_data.sql', '003_service_places.sql']) {
+          await db.query(
+            'INSERT INTO schema_migrations (filename) VALUES ($1) ON CONFLICT DO NOTHING',
+            [f]
+          );
+        }
+      }
+    }
+
     const migrationsDir = __dirname;
     const files = fs.readdirSync(migrationsDir)
       .filter(f => f.endsWith('.sql'))
