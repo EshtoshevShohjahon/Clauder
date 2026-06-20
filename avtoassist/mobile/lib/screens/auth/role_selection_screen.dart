@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/screens/home/home_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
-import 'package:avtoassist/utils/app_icons.dart';
 import 'package:avtoassist/utils/constants.dart';
 
 class RoleSelectionScreen extends StatefulWidget {
@@ -18,17 +18,17 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
   String? _selectedServiceType;
 
   final List<Map<String, dynamic>> _serviceTypes = [
-    {'type': AppConstants.serviceMechanic, 'name': 'Texnik yordam', 'icon': Icons.build},
-    {'type': AppConstants.serviceFuelDelivery, 'name': 'Yoqilg\'i quyish', 'icon': Icons.local_gas_station},
-    {'type': AppConstants.serviceCarWash, 'name': 'Avtomobil yuvish', 'icon': Icons.local_car_wash},
-    {'type': AppConstants.serviceTowTruck, 'name': 'Evakuator', 'icon': Icons.local_shipping},
+    {'type': AppConstants.serviceMechanic, 'icon': Icons.build},
+    {'type': AppConstants.serviceFuelDelivery, 'icon': Icons.local_gas_station},
+    {'type': AppConstants.serviceCarWash, 'icon': Icons.local_car_wash},
+    {'type': AppConstants.serviceTowTruck, 'icon': Icons.local_shipping},
   ];
 
   Future<void> _selectRole() async {
     if (_selectedRole == null) return;
     if (_selectedRole == 'provider' && _selectedServiceType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Xizmat turini tanlang')),
+        SnackBar(content: Text(context.read<LocaleProvider>().t('select_service_type'))),
       );
       return;
     }
@@ -51,17 +51,18 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Men kimman?'),
+        title: Text(loc.t('who_am_i')),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Text(
-              'Rolni tanlang',
+            Text(
+              loc.t('choose_role_title'),
               style: AppTheme.heading2,
               textAlign: TextAlign.center,
             ),
@@ -70,8 +71,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             // Client Card
             _buildRoleCard(
               role: 'client',
-              title: 'Mijoz',
-              description: 'Xizmat olish',
+              title: loc.t('client'),
+              description: loc.t('client_get_service'),
               icon: Icons.person,
               color: AppTheme.primaryColor,
             ),
@@ -80,8 +81,8 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             // Provider Card
             _buildRoleCard(
               role: 'provider',
-              title: 'Xizmat ko\'rsatuvchi',
-              description: 'Xizmat taqdim etish',
+              title: loc.t('provider'),
+              description: loc.t('provider_give_service'),
               icon: Icons.work,
               color: AppTheme.secondaryColor,
             ),
@@ -89,20 +90,20 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
             // Service type selection (if provider)
             if (_selectedRole == 'provider') ...[
               const SizedBox(height: 24),
-              const Text(
-                'Xizmat turini tanlang',
+              Text(
+                loc.t('choose_service_type'),
                 style: AppTheme.heading3,
               ),
               const SizedBox(height: 16),
               ..._serviceTypes.map((service) => 
-                _buildServiceTypeCard(service),
+                _buildServiceTypeCard(service, loc),
               ),
             ],
             
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: _selectedRole == null ? null : _selectRole,
-              child: const Text('Davom etish'),
+              child: Text(loc.t('continue')),
             ),
           ],
         ),
@@ -171,9 +172,10 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
     );
   }
 
-  Widget _buildServiceTypeCard(Map<String, dynamic> service) {
+  Widget _buildServiceTypeCard(Map<String, dynamic> service, LocaleProvider loc) {
     final isSelected = _selectedServiceType == service['type'];
-    
+    final serviceName = loc.t('service_${service['type']}');
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Card(
@@ -202,7 +204,7 @@ class _RoleSelectionScreenState extends State<RoleSelectionScreen> {
                 ),
                 const SizedBox(width: 16),
                 Text(
-                  service['name'] as String,
+                  serviceName,
                   style: AppTheme.bodyLarge.copyWith(
                     fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                   ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
 class OilChangeListScreen extends StatelessWidget {
@@ -34,10 +36,10 @@ class OilChangeListScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Moy almashtirish tarixi'),
+        title: Text(context.read<LocaleProvider>().t('oil_change_history')),
       ),
       body: oilChanges.isEmpty
-          ? _buildEmptyState()
+          ? _buildEmptyState(context)
           : ListView.builder(
               padding: const EdgeInsets.all(16),
               itemCount: oilChanges.length,
@@ -48,7 +50,8 @@ class OilChangeListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
+    final loc = context.read<LocaleProvider>();
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +59,7 @@ class OilChangeListScreen extends StatelessWidget {
           Icon(Icons.oil_barrel, size: 64, color: Colors.grey[400]),
           const SizedBox(height: 16),
           Text(
-            'Moy almashtirish tarixi yo\'q',
+            loc.t('no_oil_history'),
             style: AppTheme.heading3.copyWith(color: Colors.grey),
           ),
         ],
@@ -72,6 +75,7 @@ class _OilChangeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.read<LocaleProvider>();
     final date = oilChange['changed_at'] as DateTime;
     final mileage = oilChange['mileage'] as int;
     final nextMileage = oilChange['next_change_mileage'] as int?;
@@ -119,7 +123,7 @@ class _OilChangeCard extends StatelessWidget {
             const Divider(height: 24),
             _InfoRow(
               icon: Icons.speed,
-              label: 'Kilometraj',
+              label: loc.t('mileage'),
               value: '${mileage.toString().replaceAllMapped(
                     RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
                     (m) => '${m[1]} ',
@@ -129,7 +133,7 @@ class _OilChangeCard extends StatelessWidget {
               const SizedBox(height: 8),
               _InfoRow(
                 icon: Icons.event,
-                label: 'Keyingi almashtirish',
+                label: loc.t('next_change'),
                 value: '${nextMileage.toString().replaceAllMapped(
                       RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
                       (m) => '${m[1]} ',
@@ -140,7 +144,7 @@ class _OilChangeCard extends StatelessWidget {
               const SizedBox(height: 8),
               _InfoRow(
                 icon: Icons.location_on,
-                label: 'Manzil',
+                label: loc.t('address'),
                 value: oilChange['location'] as String,
               ),
             ],
@@ -148,8 +152,8 @@ class _OilChangeCard extends StatelessWidget {
               const SizedBox(height: 8),
               _InfoRow(
                 icon: Icons.attach_money,
-                label: 'Narx',
-                value: '${price.toStringAsFixed(0)} so\'m',
+                label: loc.t('price'),
+                value: '${price.toStringAsFixed(0)} ${loc.t('sum_unit')}',
               ),
             ],
           ],

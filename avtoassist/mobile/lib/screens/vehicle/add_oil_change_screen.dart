@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
 class AddOilChangeScreen extends StatefulWidget {
@@ -63,17 +65,19 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     // TODO: Save to API
+    final loc = context.read<LocaleProvider>();
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Moy almashtirish qo\'shildi')),
+      SnackBar(content: Text(loc.t('oil_change_added'))),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Moy almashtirish qo\'shish'),
+        title: Text(loc.t('add_oil_change')),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -84,9 +88,9 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
             children: [
               // Oil type
               DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Moy turi *',
-                  prefixIcon: Icon(Icons.oil_barrel),
+                decoration: InputDecoration(
+                  labelText: loc.t('oil_type_required'),
+                  prefixIcon: const Icon(Icons.oil_barrel),
                 ),
                 items: _commonOilTypes.map((type) {
                   return DropdownMenuItem(
@@ -99,7 +103,7 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Moy turini tanlang';
+                    return loc.t('choose_oil_type');
                   }
                   return null;
                 },
@@ -109,10 +113,10 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               // Oil brand
               TextFormField(
                 controller: _oilBrandController,
-                decoration: const InputDecoration(
-                  labelText: 'Moy markasi (ixtiyoriy)',
+                decoration: InputDecoration(
+                  labelText: loc.t('oil_brand_optional'),
                   hintText: 'Shell, Mobil, Castrol...',
-                  prefixIcon: Icon(Icons.branding_watermark),
+                  prefixIcon: const Icon(Icons.branding_watermark),
                 ),
                 textCapitalization: TextCapitalization.words,
               ),
@@ -121,19 +125,19 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               // Current mileage
               TextFormField(
                 controller: _mileageController,
-                decoration: const InputDecoration(
-                  labelText: 'Hozirgi kilometraj *',
+                decoration: InputDecoration(
+                  labelText: loc.t('current_mileage_required'),
                   hintText: '45000',
-                  prefixIcon: Icon(Icons.speed),
+                  prefixIcon: const Icon(Icons.speed),
                   suffixText: 'km',
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Kilometrajni kiriting';
+                    return loc.t('enter_mileage');
                   }
                   if (int.tryParse(value) == null) {
-                    return 'Raqam kiriting';
+                    return loc.t('enter_number');
                   }
                   return null;
                 },
@@ -143,12 +147,12 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               // Next change mileage
               TextFormField(
                 controller: _nextMileageController,
-                decoration: const InputDecoration(
-                  labelText: 'Keyingi almashtirish (ixtiyoriy)',
+                decoration: InputDecoration(
+                  labelText: loc.t('next_change_optional'),
                   hintText: '55000',
-                  prefixIcon: Icon(Icons.event),
+                  prefixIcon: const Icon(Icons.event),
                   suffixText: 'km',
-                  helperText: 'Eslatma uchun (odatda +10,000 km)',
+                  helperText: loc.t('next_change_helper'),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -158,9 +162,9 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               InkWell(
                 onTap: () => _selectDate(context),
                 child: InputDecorator(
-                  decoration: const InputDecoration(
-                    labelText: 'Sana *',
-                    prefixIcon: Icon(Icons.calendar_today),
+                  decoration: InputDecoration(
+                    labelText: loc.t('date_required'),
+                    prefixIcon: const Icon(Icons.calendar_today),
                   ),
                   child: Text(
                     '${_selectedDate.day}.${_selectedDate.month}.${_selectedDate.year}',
@@ -173,10 +177,10 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               // Location
               TextFormField(
                 controller: _locationController,
-                decoration: const InputDecoration(
-                  labelText: 'Manzil (ixtiyoriy)',
-                  hintText: 'Yunusobod tumani',
-                  prefixIcon: Icon(Icons.location_on),
+                decoration: InputDecoration(
+                  labelText: loc.t('address_optional'),
+                  hintText: 'Yunusobod',
+                  prefixIcon: const Icon(Icons.location_on),
                 ),
               ),
               const SizedBox(height: 16),
@@ -184,10 +188,10 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               // Workshop
               TextFormField(
                 controller: _workshopController,
-                decoration: const InputDecoration(
-                  labelText: 'Ustaxona nomi (ixtiyoriy)',
-                  hintText: 'AvtoServis №1',
-                  prefixIcon: Icon(Icons.store),
+                decoration: InputDecoration(
+                  labelText: loc.t('workshop_optional'),
+                  hintText: 'AvtoServis',
+                  prefixIcon: const Icon(Icons.store),
                 ),
                 textCapitalization: TextCapitalization.words,
               ),
@@ -196,11 +200,11 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               // Price
               TextFormField(
                 controller: _priceController,
-                decoration: const InputDecoration(
-                  labelText: 'Narx (ixtiyoriy)',
+                decoration: InputDecoration(
+                  labelText: loc.t('price_optional'),
                   hintText: '250000',
-                  prefixIcon: Icon(Icons.attach_money),
-                  suffixText: 'so\'m',
+                  prefixIcon: const Icon(Icons.attach_money),
+                  suffixText: loc.t('sum_unit'),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -209,10 +213,10 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               // Notes
               TextFormField(
                 controller: _notesController,
-                decoration: const InputDecoration(
-                  labelText: 'Izoh (ixtiyoriy)',
-                  hintText: 'Qo\'shimcha ma\'lumotlar...',
-                  prefixIcon: Icon(Icons.note),
+                decoration: InputDecoration(
+                  labelText: loc.t('note_optional'),
+                  hintText: loc.t('note_hint'),
+                  prefixIcon: const Icon(Icons.note),
                 ),
                 maxLines: 3,
               ),
@@ -220,7 +224,7 @@ class _AddOilChangeScreenState extends State<AddOilChangeScreen> {
               
               ElevatedButton(
                 onPressed: _saveOilChange,
-                child: const Text('Saqlash'),
+                child: Text(loc.t('save')),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/screens/auth/register_screen.dart';
 import 'package:avtoassist/screens/home/home_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
@@ -44,7 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(authProvider.error ?? 'Kirish xatosi'),
+          content: Text(authProvider.error ?? context.read<LocaleProvider>().t('login_error')),
           backgroundColor: AppTheme.errorColor,
         ),
       );
@@ -53,6 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -85,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Avtomobil yordamchisi',
+                  loc.t('app_subtitle'),
                   style: AppTheme.bodyMedium.copyWith(
                     color: AppTheme.textSecondary,
                   ),
@@ -96,15 +98,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 // Phone field
                 TextFormField(
                   controller: _phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Telefon raqam',
+                  decoration: InputDecoration(
+                    labelText: loc.t('phone_number'),
                     hintText: '+998901234567',
-                    prefixIcon: Icon(Icons.phone),
+                    prefixIcon: const Icon(Icons.phone),
                   ),
                   keyboardType: TextInputType.phone,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Telefon raqamni kiriting';
+                      return loc.t('enter_phone');
                     }
                     return null;
                   },
@@ -115,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
-                    labelText: 'Parol',
+                    labelText: loc.t('password'),
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -131,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _obscurePassword,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Parolni kiriting';
+                      return loc.t('enter_password');
                     }
                     return null;
                   },
@@ -152,7 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Kirish'),
+                          : Text(loc.t('login')),
                     );
                   },
                 ),
@@ -168,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   },
-                  child: const Text('Ro\'yxatdan o\'tish'),
+                  child: Text(loc.t('register')),
                 ),
               ],
             ),

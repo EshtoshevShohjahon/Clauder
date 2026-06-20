@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
 class ProviderHomePage extends StatefulWidget {
@@ -13,9 +15,10 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AvtoHelp Provider'),
+        title: Text(loc.t('provider_title')),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),
@@ -38,14 +41,14 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _isOnline ? 'Onlaynsiz' : 'Offlaynsiz',
+                          _isOnline ? loc.t('online') : loc.t('offline'),
                           style: AppTheme.heading2.copyWith(color: Colors.white),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          _isOnline 
-                              ? 'Yangi so\'rovlarni qabul qilasiz'
-                              : 'Oflayn rejimda so\'rovlar kelmaydi',
+                          _isOnline
+                              ? loc.t('online_desc')
+                              : loc.t('offline_desc'),
                           style: AppTheme.bodySmall.copyWith(color: Colors.white70),
                         ),
                       ],
@@ -67,15 +70,15 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
           const SizedBox(height: 24),
           
           // Stats
-          const Text('Statistika', style: AppTheme.heading3),
+          Text(loc.t('statistics'), style: AppTheme.heading3),
           const SizedBox(height: 16),
           Row(
             children: [
               Expanded(
                 child: _StatCard(
-                  title: 'Bugun',
+                  title: loc.t('today'),
                   value: '5',
-                  subtitle: 'so\'rov',
+                  subtitle: loc.t('requests_unit'),
                   icon: Icons.today,
                   color: Colors.blue,
                 ),
@@ -83,9 +86,9 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
               const SizedBox(width: 12),
               Expanded(
                 child: _StatCard(
-                  title: 'Jami',
+                  title: loc.t('total'),
                   value: '156',
-                  subtitle: 'so\'rov',
+                  subtitle: loc.t('requests_unit'),
                   icon: Icons.assignment,
                   color: Colors.green,
                 ),
@@ -97,9 +100,9 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
             children: [
               Expanded(
                 child: _StatCard(
-                  title: 'Reyting',
+                  title: loc.t('rating'),
                   value: '4.7',
-                  subtitle: '⭐ baho',
+                  subtitle: loc.t('rating_unit'),
                   icon: Icons.star,
                   color: Colors.amber,
                 ),
@@ -107,9 +110,9 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
               const SizedBox(width: 12),
               Expanded(
                 child: _StatCard(
-                  title: 'Daromad',
+                  title: loc.t('income'),
                   value: '2.5M',
-                  subtitle: 'so\'m',
+                  subtitle: loc.t('sum_unit'),
                   icon: Icons.attach_money,
                   color: Colors.purple,
                 ),
@@ -119,7 +122,7 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
           const SizedBox(height: 24),
           
           // Active orders
-          const Text('Faol so\'rovlar', style: AppTheme.heading3),
+          Text(loc.t('active_requests'), style: AppTheme.heading3),
           const SizedBox(height: 16),
           if (!_isOnline)
             Card(
@@ -134,12 +137,12 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Oflayn rejimda',
+                      loc.t('offline'),
                       style: AppTheme.heading3.copyWith(color: Colors.grey),
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Onlayn bo\'lish uchun yuqoridagi tugmani yoqing',
+                      loc.t('turn_on_to_online'),
                       style: AppTheme.bodySmall,
                       textAlign: TextAlign.center,
                     ),
@@ -160,12 +163,12 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Yangi so\'rovlar yo\'q',
+                      loc.t('no_new_requests'),
                       style: AppTheme.heading3.copyWith(color: Colors.grey),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'So\'rovlar kelganida xabarnoma olasiz',
+                    Text(
+                      loc.t('notify_on_request'),
                       style: AppTheme.bodySmall,
                       textAlign: TextAlign.center,
                     ),

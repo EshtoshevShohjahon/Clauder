@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 import 'package:avtoassist/screens/vehicle/add_vehicle_screen.dart';
 import 'package:avtoassist/screens/vehicle/vehicle_details_screen.dart';
@@ -27,9 +29,10 @@ class _MyVehicleScreenState extends State<MyVehicleScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mening avtomobilim'),
+        title: Text(loc.t('my_vehicle')),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
@@ -44,11 +47,11 @@ class _MyVehicleScreenState extends State<MyVehicleScreen> {
           ),
         ],
       ),
-      body: _vehicles.isEmpty ? _buildEmptyState() : _buildVehiclesList(),
+      body: _vehicles.isEmpty ? _buildEmptyState(loc) : _buildVehiclesList(),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(LocaleProvider loc) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
@@ -62,12 +65,12 @@ class _MyVehicleScreenState extends State<MyVehicleScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'Avtomobil qo\'shilmagan',
+              loc.t('no_vehicle'),
               style: AppTheme.heading2.copyWith(color: Colors.grey),
             ),
             const SizedBox(height: 8),
             Text(
-              'Avtomobilingiz haqida ma\'lumot qo\'shing',
+              loc.t('add_vehicle_desc'),
               style: AppTheme.bodyMedium.copyWith(color: Colors.grey),
               textAlign: TextAlign.center,
             ),
@@ -82,7 +85,7 @@ class _MyVehicleScreenState extends State<MyVehicleScreen> {
                 );
               },
               icon: const Icon(Icons.add),
-              label: const Text('Avtomobil qo\'shish'),
+              label: Text(loc.t('add_vehicle')),
             ),
           ],
         ),
@@ -123,6 +126,7 @@ class _VehicleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.read<LocaleProvider>();
     final lastOilChange = vehicle['last_oil_change'] as DateTime?;
     final daysSinceChange = lastOilChange != null
         ? DateTime.now().difference(lastOilChange).inDays
@@ -165,7 +169,7 @@ class _VehicleCard extends StatelessWidget {
                         if (vehicle['year'] != null) ...[
                           const SizedBox(height: 4),
                           Text(
-                            '${vehicle['year']} yil',
+                            '${vehicle['year']} ${loc.t('year_unit')}',
                             style: AppTheme.bodySmall,
                           ),
                         ],
@@ -183,7 +187,7 @@ class _VehicleCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Kilometraj',
+                          loc.t('mileage'),
                           style: AppTheme.caption,
                         ),
                         const SizedBox(height: 4),
@@ -211,14 +215,14 @@ class _VehicleCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Oxirgi moy',
+                            loc.t('last_oil'),
                             style: AppTheme.caption,
                           ),
                           const SizedBox(height: 4),
                           Text(
                             daysSinceChange != null
-                                ? '$daysSinceChange kun oldin'
-                                : 'Ma\'lumot yo\'q',
+                                ? '$daysSinceChange ${loc.t('days_ago')}'
+                                : loc.t('no_data'),
                             style: AppTheme.bodyLarge.copyWith(
                               fontWeight: FontWeight.w600,
                               color: daysSinceChange != null && daysSinceChange > 90

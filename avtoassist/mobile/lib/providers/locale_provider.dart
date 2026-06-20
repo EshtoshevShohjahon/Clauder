@@ -60,6 +60,15 @@ class LocaleProvider extends ChangeNotifier {
         key;
   }
 
+  /// Template tarjima ({n} kabi o'rin egallovchilar bilan)
+  String tf(String key, Map<String, String> params) {
+    var result = t(key);
+    params.forEach((k, v) {
+      result = result.replaceAll('{$k}', v);
+    });
+    return result;
+  }
+
   /// Joriy til nomi
   String get currentLanguageName => AppStrings.languageNames[_code] ?? 'O\'zbekcha';
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/screens/auth/role_selection_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
@@ -46,7 +47,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(authProvider.error ?? 'Ro\'yxatdan o\'tish xatosi'),
+          content: Text(authProvider.error ?? context.read<LocaleProvider>().t('register_error')),
           backgroundColor: AppTheme.errorColor,
         ),
       );
@@ -55,9 +56,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Ro\'yxatdan o\'tish'),
+        title: Text(loc.t('register')),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -72,10 +74,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 // Name field
                 TextFormField(
                   controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Ism (ixtiyoriy)',
-                    hintText: 'Ism familiya',
-                    prefixIcon: Icon(Icons.person),
+                  decoration: InputDecoration(
+                    labelText: loc.t('name_optional'),
+                    hintText: loc.t('full_name'),
+                    prefixIcon: const Icon(Icons.person),
                   ),
                   textInputAction: TextInputAction.next,
                 ),
@@ -84,19 +86,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 // Phone field
                 TextFormField(
                   controller: _phoneController,
-                  decoration: const InputDecoration(
-                    labelText: 'Telefon raqam',
+                  decoration: InputDecoration(
+                    labelText: loc.t('phone_number'),
                     hintText: '+998901234567',
-                    prefixIcon: Icon(Icons.phone),
+                    prefixIcon: const Icon(Icons.phone),
                   ),
                   keyboardType: TextInputType.phone,
                   textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Telefon raqamni kiriting';
+                      return loc.t('enter_phone');
                     }
                     if (!value.startsWith('+998')) {
-                      return '+998 bilan boshlang';
+                      return loc.t('start_with_998');
                     }
                     return null;
                   },
@@ -107,8 +109,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 TextFormField(
                   controller: _passwordController,
                   decoration: InputDecoration(
-                    labelText: 'Parol',
-                    hintText: 'Kamida 6 ta belgi',
+                    labelText: loc.t('password'),
+                    hintText: loc.t('min_6_chars'),
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -125,10 +127,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   textInputAction: TextInputAction.done,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Parolni kiriting';
+                      return loc.t('enter_password');
                     }
                     if (value.length < 6) {
-                      return 'Parol kamida 6 ta belgidan iborat bo\'lishi kerak';
+                      return loc.t('password_min_6');
                     }
                     return null;
                   },
@@ -149,7 +151,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 color: Colors.white,
                               ),
                             )
-                          : const Text('Ro\'yxatdan o\'tish'),
+                          : Text(loc.t('register')),
                     );
                   },
                 ),

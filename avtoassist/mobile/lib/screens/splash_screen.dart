@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/screens/auth/login_screen.dart';
 import 'package:avtoassist/screens/home/home_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
@@ -42,6 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       backgroundColor: AppTheme.primaryColor,
       body: Center(
@@ -72,9 +74,9 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Avtomobil yordamchisi',
-              style: TextStyle(
+            Text(
+              loc.t('app_subtitle'),
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.white70,
               ),

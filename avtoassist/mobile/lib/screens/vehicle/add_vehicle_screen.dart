@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
 class AddVehicleScreen extends StatefulWidget {
@@ -30,17 +32,19 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     // TODO: Save to API
+    final loc = context.read<LocaleProvider>();
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Avtomobil qo\'shildi')),
+      SnackBar(content: Text(loc.t('vehicle_added'))),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Avtomobil qo\'shish'),
+        title: Text(loc.t('add_vehicle')),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -58,15 +62,15 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               
               TextFormField(
                 controller: _brandController,
-                decoration: const InputDecoration(
-                  labelText: 'Marka *',
-                  hintText: 'Masalan: Chevrolet',
-                  prefixIcon: Icon(Icons.car_rental),
+                decoration: InputDecoration(
+                  labelText: loc.t('brand_required'),
+                  hintText: '${loc.t('eg')} Chevrolet',
+                  prefixIcon: const Icon(Icons.car_rental),
                 ),
                 textCapitalization: TextCapitalization.words,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Markani kiriting';
+                    return loc.t('enter_brand');
                   }
                   return null;
                 },
@@ -75,15 +79,15 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               
               TextFormField(
                 controller: _modelController,
-                decoration: const InputDecoration(
-                  labelText: 'Model *',
-                  hintText: 'Masalan: Gentra',
-                  prefixIcon: Icon(Icons.directions_car),
+                decoration: InputDecoration(
+                  labelText: loc.t('model_required'),
+                  hintText: '${loc.t('eg')} Gentra',
+                  prefixIcon: const Icon(Icons.directions_car),
                 ),
                 textCapitalization: TextCapitalization.words,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Modelni kiriting';
+                    return loc.t('enter_model');
                   }
                   return null;
                 },
@@ -92,10 +96,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               
               TextFormField(
                 controller: _yearController,
-                decoration: const InputDecoration(
-                  labelText: 'Yil (ixtiyoriy)',
+                decoration: InputDecoration(
+                  labelText: loc.t('year_optional'),
                   hintText: '2020',
-                  prefixIcon: Icon(Icons.calendar_today),
+                  prefixIcon: const Icon(Icons.calendar_today),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -103,10 +107,10 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               
               TextFormField(
                 controller: _plateController,
-                decoration: const InputDecoration(
-                  labelText: 'Davlat raqami (ixtiyoriy)',
+                decoration: InputDecoration(
+                  labelText: loc.t('plate_optional'),
                   hintText: '01 A 777 BA',
-                  prefixIcon: Icon(Icons.confirmation_number),
+                  prefixIcon: const Icon(Icons.confirmation_number),
                 ),
                 textCapitalization: TextCapitalization.characters,
               ),
@@ -114,19 +118,19 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               
               TextFormField(
                 controller: _mileageController,
-                decoration: const InputDecoration(
-                  labelText: 'Hozirgi kilometraj *',
+                decoration: InputDecoration(
+                  labelText: loc.t('current_mileage_required'),
                   hintText: '45000',
-                  prefixIcon: Icon(Icons.speed),
+                  prefixIcon: const Icon(Icons.speed),
                   suffixText: 'km',
                 ),
                 keyboardType: TextInputType.number,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Kilometrajni kiriting';
+                    return loc.t('enter_mileage');
                   }
                   if (int.tryParse(value) == null) {
-                    return 'Raqam kiriting';
+                    return loc.t('enter_number');
                   }
                   return null;
                 },
@@ -135,7 +139,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
               
               ElevatedButton(
                 onPressed: _saveVehicle,
-                child: const Text('Saqlash'),
+                child: Text(loc.t('save')),
               ),
             ],
           ),

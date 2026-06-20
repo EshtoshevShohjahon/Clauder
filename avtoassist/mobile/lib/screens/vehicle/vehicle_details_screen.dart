@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 import 'package:avtoassist/screens/vehicle/oil_change_list_screen.dart';
 import 'package:avtoassist/screens/vehicle/add_oil_change_screen.dart';
@@ -25,7 +27,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
   final _reminders = [
     {
       'id': 1,
-      'title': 'Moy almashtirish vaqti',
+      'title_key': 'oil_change_time',
       'remaining_km': 500,
       'is_urgent': true,
     },
@@ -33,6 +35,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Text('${_vehicle['brand']} ${_vehicle['model']}'),
@@ -75,7 +78,7 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
                   if (_vehicle['year'] != null) ...[
                     const SizedBox(height: 4),
                     Text(
-                      '${_vehicle['year']} yil',
+                      '${_vehicle['year']} ${loc.t('year_unit')}',
                       style: AppTheme.bodyMedium.copyWith(
                         color: AppTheme.textSecondary,
                       ),
@@ -134,12 +137,12 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Eslatmalar', style: AppTheme.heading3),
+                Text(loc.t('reminders'), style: AppTheme.heading3),
                 TextButton(
                   onPressed: () {
                     // TODO: View all reminders
                   },
-                  child: const Text('Barchasi'),
+                  child: Text(loc.t('all')),
                 ),
               ],
             ),
@@ -149,13 +152,13 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
           ],
 
           // Quick actions
-          const Text('Tezkor harakatlar', style: AppTheme.heading3),
+          Text(loc.t('quick_actions'), style: AppTheme.heading3),
           const SizedBox(height: 12),
           
           _ActionCard(
             icon: Icons.oil_barrel,
-            title: 'Moy almashtirish qo\'shish',
-            subtitle: 'Oxirgi moy almashtirish ma\'lumotini kiriting',
+            title: loc.t('add_oil_change'),
+            subtitle: loc.t('add_oil_change_desc'),
             color: Colors.orange,
             onTap: () {
               Navigator.push(
@@ -170,8 +173,8 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
           
           _ActionCard(
             icon: Icons.history,
-            title: 'Moy almashtirish tarixi',
-            subtitle: 'Barcha moy almashtirishlar tarixi',
+            title: loc.t('oil_change_history'),
+            subtitle: loc.t('oil_change_history_desc'),
             color: Colors.blue,
             onTap: () {
               Navigator.push(
@@ -186,8 +189,8 @@ class _VehicleDetailsScreenState extends State<VehicleDetailsScreen> {
           
           _ActionCard(
             icon: Icons.notifications_active,
-            title: 'Eslatma qo\'shish',
-            subtitle: 'Yangi texnik xizmat eslatmasi',
+            title: loc.t('add_reminder'),
+            subtitle: loc.t('add_reminder_desc'),
             color: Colors.purple,
             onTap: () {
               // TODO: Add reminder
@@ -206,6 +209,7 @@ class _ReminderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.read<LocaleProvider>();
     final isUrgent = reminder['is_urgent'] as bool;
     final remainingKm = reminder['remaining_km'] as int;
 
@@ -228,11 +232,11 @@ class _ReminderCard extends StatelessWidget {
           ),
         ),
         title: Text(
-          reminder['title'] as String,
+          loc.t(reminder['title_key'] as String),
           style: AppTheme.bodyLarge.copyWith(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          'Yana $remainingKm km qoldi',
+          loc.tf('km_remaining', {'n': '$remainingKm'}),
           style: AppTheme.bodySmall,
         ),
         trailing: Icon(
