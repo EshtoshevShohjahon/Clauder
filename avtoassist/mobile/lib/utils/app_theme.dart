@@ -131,10 +131,7 @@ class AppTheme {
     color: textSecondary,
     height: 1.4,
   );
-}
 
-
-  
   // Dark Theme
   static ThemeData darkTheme = ThemeData(
     useMaterial3: true,
@@ -203,3 +200,4 @@ class AppTheme {
       unselectedItemColor: darkTextSecondary,
     ),
   );
+}

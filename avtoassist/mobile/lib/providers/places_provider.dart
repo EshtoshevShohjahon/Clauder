@@ -1,7 +1,7 @@
+import 'dart:convert';
+import 'dart:math' show sin, cos, sqrt, asin, pi;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
-import 'dart:math' show sin, cos, sqrt, asin;
 import 'package:avtoassist/models/service_place_model.dart';
 import 'package:avtoassist/services/api_service.dart';
 
@@ -231,22 +231,23 @@ class PlacesProvider extends ChangeNotifier {
   /// Masofa hisoblash (Haversine formula)
   double _calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     const double earthRadius = 6371000; // metrda
-    
+
     final dLat = _toRadians(lat2 - lat1);
     final dLon = _toRadians(lon2 - lon1);
-    
-    final a = 
-        (dLat / 2).sin() * (dLat / 2).sin() +
-        _toRadians(lat1).cos() * _toRadians(lat2).cos() *
-        (dLon / 2).sin() * (dLon / 2).sin();
-    
-    final c = 2 * (a.sqrt()).asin();
-    
+
+    final a = sin(dLat / 2) * sin(dLat / 2) +
+        cos(_toRadians(lat1)) *
+            cos(_toRadians(lat2)) *
+            sin(dLon / 2) *
+            sin(dLon / 2);
+
+    final c = 2 * asin(sqrt(a));
+
     return earthRadius * c;
   }
 
   double _toRadians(double degrees) {
-    return degrees * (3.141592653589793 / 180.0);
+    return degrees * (pi / 180.0);
   }
 
   /// Cache'ni tozalash

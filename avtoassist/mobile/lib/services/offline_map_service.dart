@@ -30,19 +30,16 @@ class OfflineMapService {
     return TileLayer(
       urlTemplate: osmTileUrl,
       userAgentPackageName: userAgent,
-      
+
       // Cache settings - offline rejim uchun muhim
       tileProvider: CachedTileProvider(),
-      
+
       // Tile loading settings
       maxZoom: 19,
       minZoom: 3,
-      
+
       // Performance settings
       keepBuffer: 5,
-      
-      // Tile fade animation
-      tileFadeInDuration: const Duration(milliseconds: 200),
     );
   }
 
@@ -156,22 +153,14 @@ class OfflineMapService {
 }
 
 /// Custom Tile Provider with caching
-/// Bu class tile'larni cache qiladi va offline rejimda ishlatadi
+/// Bu class tile'larni cache qiladi va offline rejimda ishlatadi.
+/// cacheManager parametri berilmasa, cached_network_image o'zining
+/// standart DefaultCacheManager'idan foydalanadi (disk cache).
 class CachedTileProvider extends TileProvider {
   @override
   ImageProvider getImage(TileCoordinates coordinates, TileLayer options) {
     final url = getTileUrl(coordinates, options);
-    
-    return CachedNetworkImageProvider(
-      url,
-      // Cache settings
-      cacheKey: url,
-      maxHeight: 256,
-      maxWidth: 256,
-      
-      // Cache duration - 90 kun
-      cacheManager: DefaultCacheManager(),
-    );
+    return CachedNetworkImageProvider(url, cacheKey: url);
   }
 
   String getTileUrl(TileCoordinates coordinates, TileLayer options) {
@@ -180,12 +169,4 @@ class CachedTileProvider extends TileProvider {
         .replaceAll('{x}', coordinates.x.toString())
         .replaceAll('{y}', coordinates.y.toString());
   }
-}
-
-/// Cache manager (default - 100 days)
-class DefaultCacheManager {
-  // cached_network_image paketi o'z cache manager'ini ishlatadi
-  // Default: 7 kun, biz uni 90 kunga o'zgartiramiz
-  static const Duration cacheMaxAge = Duration(days: 90);
-  static const int maxNrOfCacheObjects = 2000; // ~50-100MB
 }

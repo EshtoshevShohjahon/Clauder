@@ -79,10 +79,10 @@ class LocationService {
       // Joylashuvni olish - SATELLITE'DAN!
       // Internet yo'q bo'lsa ham ishlaydi
       final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: accuracy,
-        timeLimit: const Duration(seconds: 30),
-        // Bu parametr internet ishlatmaydi!
-        forceAndroidLocationManager: true, // Android native GPS
+        locationSettings: LocationSettings(
+          accuracy: accuracy,
+          timeLimit: const Duration(seconds: 30),
+        ),
       );
 
       _lastKnownPosition = position;
@@ -180,7 +180,9 @@ class LocationService {
           longitude: positionData['longitude'],
           accuracy: positionData['accuracy'],
           altitude: 0,
+          altitudeAccuracy: 0,
           heading: 0,
+          headingAccuracy: 0,
           speed: 0,
           speedAccuracy: 0,
           timestamp: DateTime.parse(positionData['timestamp']),

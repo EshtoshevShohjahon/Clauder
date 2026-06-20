@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AppConstants {
   // API Configuration
   static const String baseUrl = 'http://10.0.2.2:3000/api'; // Android emulator uchun
@@ -33,6 +35,14 @@ class AppConstants {
   static const String keyUserId = 'user_id';
   static const String keyUserRole = 'user_role';
   static const String keyUserPhone = 'user_phone';
+
+  // Service Type IDs (string konstantalar)
+  static const String serviceMechanic = 'mechanic';
+  static const String serviceFuelDelivery = 'fuel_delivery';
+  static const String serviceCarWash = 'car_wash';
+  static const String servicePartsSeller = 'auto_parts';
+  static const String serviceWorkshop = 'workshop';
+  static const String serviceTowTruck = 'evacuator';
   
   // Service Types with map support
   static const List<Map<String, dynamic>> services = [

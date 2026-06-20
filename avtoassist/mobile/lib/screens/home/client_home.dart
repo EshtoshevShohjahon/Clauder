@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:avtoassist/utils/app_theme.dart';
-import 'package:avtoassist/utils/app_icons.dart';
 import 'package:avtoassist/utils/constants.dart';
 import 'package:avtoassist/screens/services/services_map_screen.dart';
 
