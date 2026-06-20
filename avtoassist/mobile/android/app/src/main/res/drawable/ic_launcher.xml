@@ -1,0 +1,31 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Ko'k fon -->
+    <path
+        android:fillColor="#2563EB"
+        android:pathData="M0,0L108,0L108,108L0,108Z" />
+
+    <!-- Avtomobil kabinasi -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M42,40L66,40L72,56L36,56Z" />
+
+    <!-- Avtomobil tanasi -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,54L78,54L78,66L30,66Z" />
+
+    <!-- Chap g'ildirak -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M38,66m-6,0a6,6 0 1,0 12,0a6,6 0 1,0 -12,0" />
+
+    <!-- O'ng g'ildirak -->
+    <path
+        android:fillColor="#1E293B"
+        android:pathData="M70,66m-6,0a6,6 0 1,0 12,0a6,6 0 1,0 -12,0" />
+</vector>
