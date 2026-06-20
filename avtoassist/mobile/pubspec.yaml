@@ -50,5 +50,11 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^3.0.1
 
+# geolocator_android 4.6.2 Flutter 3.24 bilan mos emas
+# (flutter.compileSdkVersion ni topa olmaydi).
+# 4.5.5 - eski, barqaror versiya, build xatosini bartaraf qiladi.
+dependency_overrides:
+  geolocator_android: 4.5.5
+
 flutter:
   uses-material-design: true
