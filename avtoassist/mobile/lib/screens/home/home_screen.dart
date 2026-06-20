@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
 import 'package:avtoassist/screens/home/client_home.dart';
 import 'package:avtoassist/screens/home/provider_home.dart';
+import 'package:avtoassist/screens/vehicle/my_vehicle_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
