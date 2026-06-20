@@ -1,0 +1,26 @@
+# AvtoHelp - Ma'lumotlar bazasi (PostgreSQL + PostGIS)
+# Ishga tushirish:  docker compose up -d
+# To'xtatish:       docker compose down
+# Ma'lumotni o'chirish bilan to'xtatish: docker compose down -v
+
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    container_name: avtohelp_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: avtoassist
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - avtohelp_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d avtoassist"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  avtohelp_pgdata:
