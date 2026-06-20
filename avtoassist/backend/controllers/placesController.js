@@ -215,9 +215,53 @@ async function searchPlaces(req, res) {
   }
 }
 
+/**
+ * Yangi xizmat ko'rsatuvchi (do'kon/shoxobcha) qo'shish
+ * POST /api/places  (faqat ro'yxatdan o'tgan foydalanuvchilar)
+ */
+async function createPlace(req, res) {
+  try {
+    const {
+      name, type, address, phone, phone_2,
+      latitude, longitude, working_hours, description,
+    } = req.body;
+
+    if (!name || !type || !address || !phone ||
+        latitude === undefined || longitude === undefined) {
+      return res.status(400).json({
+        success: false,
+        message: 'Majburiy maydonlar to\'ldirilmagan (nom, tur, manzil, telefon, joylashuv)',
+      });
+    }
+
+    const ownerId = req.user ? (req.user.user_id || req.user.id || null) : null;
+    const point = `POINT(${longitude} ${latitude})`;
+
+    const result = await db.query(
+      `INSERT INTO service_places
+        (name, type, address, phone, phone_2, location, working_hours, rating, description, owner_user_id)
+       VALUES ($1, $2, $3, $4, $5, ST_GeogFromText($6), $7, 0, $8, $9)
+       RETURNING id, name, type, address, phone, phone_2, working_hours, rating, description,
+         ST_X(location::geometry) as longitude,
+         ST_Y(location::geometry) as latitude`,
+      [name, type, address, phone, phone_2 || null, point, working_hours || null, description || null, ownerId]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: 'Manzil qo\'shildi',
+      data: { place: result.rows[0] },
+    });
+  } catch (error) {
+    console.error('Create place error:', error);
+    res.status(500).json({ success: false, message: 'Server xatosi' });
+  }
+}
+
 module.exports = {
   getNearbyPlaces,
   getAllPlaces,
   getPlaceById,
   searchPlaces,
+  createPlace,
 };

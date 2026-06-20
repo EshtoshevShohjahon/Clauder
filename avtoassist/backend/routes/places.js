@@ -14,4 +14,7 @@ router.get('/search', placesController.searchPlaces);
 router.get('/', placesController.getAllPlaces);
 router.get('/:id', placesController.getPlaceById);
 
+// Manzil qo'shish (faqat ro'yxatdan o'tgan foydalanuvchilar)
+router.post('/', authenticate, placesController.createPlace);
+
 module.exports = router;

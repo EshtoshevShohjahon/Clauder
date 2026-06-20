@@ -250,6 +250,42 @@ class PlacesProvider extends ChangeNotifier {
     return degrees * (pi / 180.0);
   }
 
+  /// Yangi manzil (do'kon/shoxobcha) qo'shish
+  Future<bool> createPlace({
+    required String name,
+    required String type,
+    required String address,
+    required String phone,
+    String? phone2,
+    required double latitude,
+    required double longitude,
+    String? workingHours,
+    String? description,
+  }) async {
+    try {
+      final response = await _api.post(
+        '/places',
+        body: {
+          'name': name,
+          'type': type,
+          'address': address,
+          'phone': phone,
+          if (phone2 != null && phone2.isNotEmpty) 'phone_2': phone2,
+          'latitude': latitude,
+          'longitude': longitude,
+          if (workingHours != null && workingHours.isNotEmpty) 'working_hours': workingHours,
+          if (description != null && description.isNotEmpty) 'description': description,
+        },
+        needsAuth: true,
+      );
+      return response['success'] == true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
   /// Cache'ni tozalash
   Future<void> clearCache() async {
     final prefs = await SharedPreferences.getInstance();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
 import 'package:avtoassist/providers/locale_provider.dart';
+import 'package:avtoassist/screens/services/add_place_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
 class ProviderHomePage extends StatefulWidget {
@@ -83,6 +84,19 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
                 ],
               ),
             ),
+          ),
+          const SizedBox(height: 24),
+          
+          // Manzilimni qo'shish tugmasi
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddPlaceScreen()),
+              );
+            },
+            icon: const Icon(Icons.add_location_alt),
+            label: Text(loc.t('add_my_place')),
           ),
           const SizedBox(height: 24),
           
