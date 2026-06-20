@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // Colors
-  static const Color primaryColor = Color(0xFF2563EB); // Blue
-  static const Color secondaryColor = Color(0xFF10B981); // Green
-  static const Color accentColor = Color(0xFFF59E0B); // Amber
-  static const Color errorColor = Color(0xFFEF4444); // Red
-  static const Color successColor = Color(0xFF10B981); // Green
+  // Colors (mockup: amber/asphalt/teal)
+  static const Color primaryColor = Color(0xFFFF7A1A); // Amber
+  static const Color secondaryColor = Color(0xFF2BD9A6); // Teal
+  static const Color accentColor = Color(0xFFFF7A1A); // Amber
+  static const Color errorColor = Color(0xFFE5484D); // Red
+  static const Color successColor = Color(0xFF2BD9A6); // Teal
   static const Color backgroundColor = Color(0xFFF9FAFB);
   static const Color cardColor = Colors.white;
-  static const Color textPrimary = Color(0xFF111827);
+  static const Color textPrimary = Color(0xFF15171B);
   static const Color textSecondary = Color(0xFF6B7280);
   static const Color borderColor = Color(0xFFE5E7EB);
-  
-  // Dark Mode Colors
-  static const Color darkBackgroundColor = Color(0xFF121212);
-  static const Color darkCardColor = Color(0xFF1E1E1E);
-  static const Color darkTextPrimary = Color(0xFFE1E1E1);
-  static const Color darkTextSecondary = Color(0xFFB0B0B0);
-  static const Color darkBorderColor = Color(0xFF2C2C2C);
+
+  // Dark Mode Colors (mockup asphalt)
+  static const Color darkBackgroundColor = Color(0xFF15171B); // asphalt
+  static const Color darkCardColor = Color(0xFF1F2329); // charcoal
+  static const Color darkTextPrimary = Color(0xFFECE7DE); // bone
+  static const Color darkTextSecondary = Color(0xFFB9B4AA); // bone-dim
+  static const Color darkBorderColor = Color(0xFF33383F); // steel-line
   
   // Light Theme
   static ThemeData lightTheme = ThemeData(
@@ -39,7 +39,7 @@ class AppTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
+        foregroundColor: const Color(0xFF1A1100),
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
@@ -151,7 +151,7 @@ class AppTheme {
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: primaryColor,
-        foregroundColor: Colors.white,
+        foregroundColor: const Color(0xFF1A1100),
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         shape: RoundedRectangleBorder(
