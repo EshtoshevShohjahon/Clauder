@@ -32,11 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ? [
             const ClientHomePage(),
             const OrdersListPage(),
+            const MyVehicleNavigatorPage(),
             const ProfilePage(),
           ]
         : [
             const ProviderHomePage(),
             const ProviderOrdersPage(),
+            const MyVehicleNavigatorPage(),
             const ProfilePage(),
           ];
 
@@ -46,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: _currentIndex,
         onTap: (index) => setState(() => _currentIndex = index),
         selectedItemColor: AppTheme.primaryColor,
+        type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -54,6 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt),
             label: 'So\'rovlar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.directions_car),
+            label: 'Avtomobil',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -87,6 +94,16 @@ class ProviderOrdersPage extends StatelessWidget {
       appBar: AppBar(title: const Text('So\'rovlar')),
       body: const Center(child: Text('Yangi so\'rovlar')),
     );
+  }
+}
+
+// Vehicle Navigator Page (wrapper for maintaining navigation state)
+class MyVehicleNavigatorPage extends StatelessWidget {
+  const MyVehicleNavigatorPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MyVehicleScreen();
   }
 }
 

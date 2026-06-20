@@ -148,6 +148,65 @@ CREATE INDEX idx_notifications_user ON notifications(user_id);
 CREATE INDEX idx_notifications_read ON notifications(is_read);
 CREATE INDEX idx_notifications_created ON notifications(created_at DESC);
 
+-- Vehicles (Avtomobillar) jadvali
+CREATE TABLE IF NOT EXISTS vehicles (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    brand VARCHAR(100) NOT NULL,
+    model VARCHAR(100) NOT NULL,
+    year INTEGER,
+    plate_number VARCHAR(20),
+    current_mileage INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_vehicles_user ON vehicles(user_id);
+
+-- Oil Changes (Moy almashtirish tarixi) jadvali
+CREATE TABLE IF NOT EXISTS oil_changes (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    vehicle_id INTEGER REFERENCES vehicles(id) ON DELETE CASCADE,
+    oil_type VARCHAR(100) NOT NULL,
+    oil_brand VARCHAR(100),
+    mileage INTEGER NOT NULL,
+    next_change_mileage INTEGER,
+    location VARCHAR(200),
+    workshop_name VARCHAR(200),
+    price DECIMAL(10,2),
+    notes TEXT,
+    changed_at DATE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_oil_changes_user ON oil_changes(user_id);
+CREATE INDEX idx_oil_changes_vehicle ON oil_changes(vehicle_id);
+CREATE INDEX idx_oil_changes_date ON oil_changes(changed_at DESC);
+
+-- Maintenance Reminders (Texnik xizmat eslatmalari) jadvali
+CREATE TABLE IF NOT EXISTS maintenance_reminders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    vehicle_id INTEGER REFERENCES vehicles(id) ON DELETE CASCADE,
+    reminder_type VARCHAR(50) NOT NULL CHECK (reminder_type IN (
+        'oil_change', 'tire_rotation', 'brake_check', 
+        'filter_change', 'battery_check', 'general_service'
+    )),
+    title VARCHAR(200) NOT NULL,
+    description TEXT,
+    due_mileage INTEGER,
+    due_date DATE,
+    is_completed BOOLEAN DEFAULT FALSE,
+    completed_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_maintenance_reminders_user ON maintenance_reminders(user_id);
+CREATE INDEX idx_maintenance_reminders_vehicle ON maintenance_reminders(vehicle_id);
+CREATE INDEX idx_maintenance_reminders_completed ON maintenance_reminders(is_completed);
+CREATE INDEX idx_maintenance_reminders_due_date ON maintenance_reminders(due_date);
+
 -- Updated_at trigger funksiyasi
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
@@ -175,6 +234,11 @@ CREATE TRIGGER update_orders_updated_at
 
 CREATE TRIGGER update_parts_updated_at
     BEFORE UPDATE ON parts
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_vehicles_updated_at
+    BEFORE UPDATE ON vehicles
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
