@@ -6,6 +6,7 @@
     <application
         android:label="AvtoHelp"
         android:name="${applicationName}"
+        android:usesCleartextTraffic="true"
         android:icon="@drawable/ic_launcher">
         <activity
             android:name=".MainActivity"

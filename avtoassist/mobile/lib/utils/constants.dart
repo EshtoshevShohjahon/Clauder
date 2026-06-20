@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class AppConstants {
   // API Configuration
-  static const String baseUrl = 'http://10.0.2.2:3000/api'; // Android emulator uchun
-  static const String wsUrl = 'ws://10.0.2.2:3000';
-  
-  // Production URLs (o'zgartiring)
-  // static const String baseUrl = 'https://api.avtoassist.uz/api';
-  // static const String wsUrl = 'wss://api.avtoassist.uz';
+  static const String baseUrl = 'http://172.25.192.1:3000/api'; // Kompyuter IP (real qurilma uchun)
+  static const String wsUrl = 'ws://172.25.192.1:3000';
+
+  // Android emulator uchun:
+  // static const String baseUrl = 'http://10.0.2.2:3000/api';
+  // static const String wsUrl = 'ws://10.0.2.2:3000';
   
   // Endpoints
   static const String authRegister = '/auth/register';
