@@ -354,12 +354,36 @@ class ProfilePage extends StatelessWidget {
                 value: 'provider',
                 groupValue: current,
                 activeColor: AppTheme.primaryColor,
-                onChanged: (v) async {
+                onChanged: (v) {
                   Navigator.pop(context);
-                  await authProvider.selectRole('provider', serviceType: 'mechanic');
+                  _showServiceTypeDialog(context, authProvider, loc);
                 },
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showServiceTypeDialog(BuildContext context, AuthProvider authProvider, LocaleProvider loc) {
+    const serviceTypes = ['mechanic', 'fuel_delivery', 'car_wash', 'evacuator'];
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(loc.t('choose_service_type')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: serviceTypes.map((type) {
+              return ListTile(
+                title: Text(loc.t('service_$type')),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await authProvider.selectRole('provider', serviceType: type);
+                },
+              );
+            }).toList(),
           ),
         );
       },

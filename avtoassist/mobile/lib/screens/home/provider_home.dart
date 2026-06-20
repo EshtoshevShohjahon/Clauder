@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:avtoassist/providers/auth_provider.dart';
 import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
@@ -11,11 +12,17 @@ class ProviderHomePage extends StatefulWidget {
 }
 
 class _ProviderHomePageState extends State<ProviderHomePage> {
-  bool _isOnline = false;
+  // Ilovaga kirganda avtomatik ONLAYN (sessiya davomida onlayn qoladi)
+  bool _isOnline = true;
+
+  void _setOnline(bool value) {
+    setState(() => _isOnline = value);
+  }
 
   @override
   Widget build(BuildContext context) {
     final loc = context.watch<LocaleProvider>();
+    final user = context.watch<AuthProvider>().user;
     return Scaffold(
       appBar: AppBar(
         title: Text(loc.t('provider_title')),
@@ -51,16 +58,26 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
                               : loc.t('offline_desc'),
                           style: AppTheme.bodySmall.copyWith(color: Colors.white70),
                         ),
+                        if (user?.serviceType != null) ...[
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: Colors.white24,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              loc.t('service_${user!.serviceType}'),
+                              style: AppTheme.caption.copyWith(color: Colors.white),
+                            ),
+                          ),
+                        ],
                       ],
                     ),
                   ),
                   Switch(
                     value: _isOnline,
-                    onChanged: (value) {
-                      setState(() {
-                        _isOnline = value;
-                      });
-                    },
+                    onChanged: (value) => _setOnline(value),
                     activeColor: Colors.white,
                   ),
                 ],
@@ -77,7 +94,7 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
               Expanded(
                 child: _StatCard(
                   title: loc.t('today'),
-                  value: '5',
+                  value: '0',
                   subtitle: loc.t('requests_unit'),
                   icon: Icons.today,
                   color: Colors.blue,
@@ -87,7 +104,7 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
               Expanded(
                 child: _StatCard(
                   title: loc.t('total'),
-                  value: '156',
+                  value: '0',
                   subtitle: loc.t('requests_unit'),
                   icon: Icons.assignment,
                   color: Colors.green,
@@ -101,7 +118,7 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
               Expanded(
                 child: _StatCard(
                   title: loc.t('rating'),
-                  value: '4.7',
+                  value: '0.0',
                   subtitle: loc.t('rating_unit'),
                   icon: Icons.star,
                   color: Colors.amber,
@@ -111,7 +128,7 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
               Expanded(
                 child: _StatCard(
                   title: loc.t('income'),
-                  value: '2.5M',
+                  value: '0',
                   subtitle: loc.t('sum_unit'),
                   icon: Icons.attach_money,
                   color: Colors.purple,
