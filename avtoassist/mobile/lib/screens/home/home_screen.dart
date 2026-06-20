@@ -150,6 +150,18 @@ class ProfilePage extends StatelessWidget {
           ),
           const SizedBox(height: 16),
 
+          // Rol o'zgartirish (mijoz / xizmat ko'rsatuvchi)
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.swap_horiz, color: AppTheme.primaryColor),
+              title: Text(loc.t('role')),
+              subtitle: Text(user?.isClient == true ? loc.t('client') : loc.t('provider')),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showRoleDialog(context, authProvider, loc),
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // Til tanlash
           Card(
             child: ListTile(
@@ -272,6 +284,43 @@ class ProfilePage extends StatelessWidget {
               child: Text(loc.t('save')),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void _showRoleDialog(BuildContext context, AuthProvider authProvider, LocaleProvider loc) {
+    final current = authProvider.user?.role ?? 'client';
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(loc.t('role')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              RadioListTile<String>(
+                title: Text(loc.t('client')),
+                value: 'client',
+                groupValue: current,
+                activeColor: AppTheme.primaryColor,
+                onChanged: (v) async {
+                  Navigator.pop(context);
+                  await authProvider.selectRole('client');
+                },
+              ),
+              RadioListTile<String>(
+                title: Text(loc.t('provider')),
+                value: 'provider',
+                groupValue: current,
+                activeColor: AppTheme.primaryColor,
+                onChanged: (v) async {
+                  Navigator.pop(context);
+                  await authProvider.selectRole('provider', serviceType: 'mechanic');
+                },
+              ),
+            ],
+          ),
         );
       },
     );
