@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:avtoassist/models/user_model.dart';
@@ -19,21 +20,35 @@ class AuthProvider extends ChangeNotifier {
     try {
       await _api.loadToken();
       final prefs = await SharedPreferences.getInstance();
-      final userId = prefs.getInt(AppConstants.keyUserId);
-      
-      if (userId != null) {
-        final response = await _api.get(
-          AppConstants.userProfile,
-          needsAuth: true,
-        );
-        
-        if (response['success'] == true) {
-          _user = User.fromJson(response['data']['user']);
-          notifyListeners();
-        }
+      final token = prefs.getString(AppConstants.keyToken);
+      final userJson = prefs.getString('user_data');
+
+      // Saqlangan sessiya bo'lsa - darhol tiklaymiz (internet kerak emas)
+      if (token != null && userJson != null) {
+        _user = User.fromJson(jsonDecode(userJson) as Map<String, dynamic>);
+        notifyListeners();
+        // Fonda profilni yangilashga urinamiz (xato bo'lsa - jim o'tkazamiz)
+        _refreshProfile();
       }
     } catch (e) {
       _error = e.toString();
+    }
+  }
+
+  Future<void> _refreshProfile() async {
+    try {
+      final response = await _api.get(
+        AppConstants.userProfile,
+        needsAuth: true,
+      );
+      if (response['success'] == true) {
+        _user = User.fromJson(response['data']['user']);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_data', jsonEncode(_user!.toJson()));
+        notifyListeners();
+      }
+    } catch (_) {
+      // Internet yo'q / server javob bermadi - saqlangan sessiya qoladi
     }
   }
 
@@ -63,6 +78,7 @@ class AuthProvider extends ChangeNotifier {
         await _api.setToken(token);
         final prefs = await SharedPreferences.getInstance();
         await prefs.setInt(AppConstants.keyUserId, _user!.id);
+        await prefs.setString('user_data', jsonEncode(_user!.toJson()));
         
         _isLoading = false;
         notifyListeners();
@@ -103,6 +119,7 @@ class AuthProvider extends ChangeNotifier {
         await _api.setToken(token);
         final prefs = await SharedPreferences.getInstance();
         await prefs.setInt(AppConstants.keyUserId, _user!.id);
+        await prefs.setString('user_data', jsonEncode(_user!.toJson()));
         
         _isLoading = false;
         notifyListeners();
@@ -142,6 +159,8 @@ class AuthProvider extends ChangeNotifier {
 
       if (response['success'] == true) {
         _user = User.fromJson(response['data']['user']);
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_data', jsonEncode(_user!.toJson()));
         notifyListeners();
         return true;
       }
