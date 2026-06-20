@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 import 'package:avtoassist/utils/constants.dart';
 import 'package:avtoassist/screens/services/services_map_screen.dart';
@@ -8,6 +10,7 @@ class ClientHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('AvtoHelp'),
@@ -30,12 +33,12 @@ class ClientHomePage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Qanday yordam kerak?',
+                    loc.t('greeting'),
                     style: AppTheme.heading2.copyWith(color: Colors.white),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Kerakli xizmatni tanlang',
+                    loc.t('search_hint'),
                     style: AppTheme.bodyMedium.copyWith(color: Colors.white70),
                   ),
                 ],
@@ -43,9 +46,9 @@ class ClientHomePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // Services grid
-          const Text('Xizmatlar', style: AppTheme.heading3),
+          Text(loc.t('services'), style: AppTheme.heading3),
           const SizedBox(height: 16),
           GridView.builder(
             shrinkWrap: true,
@@ -59,14 +62,16 @@ class ClientHomePage extends StatelessWidget {
             itemCount: AppConstants.services.length,
             itemBuilder: (context, index) {
               final service = AppConstants.services[index];
+              final serviceId = service['id'] as String;
+              final serviceName = loc.t('service_$serviceId');
               return _ServiceCard(
                 icon: service['icon'] as IconData,
-                title: service['name'] as String,
-                color: _getServiceColor(service['id'] as String),
+                title: serviceName,
+                color: _getServiceColor(serviceId),
                 onTap: () => _handleServiceTap(
                   context,
-                  service['id'] as String,
-                  service['name'] as String,
+                  serviceId,
+                  serviceName,
                   service['has_map'] as bool,
                   service['place_type'] as String?,
                 ),
@@ -252,6 +257,7 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -276,7 +282,7 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    'Tez orada!',
+                    loc.t('coming_soon'),
                     style: AppTheme.bodyMedium.copyWith(
                       color: Colors.amber.shade900,
                       fontWeight: FontWeight.w600,
@@ -288,14 +294,14 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
           ),
           const SizedBox(height: 16),
           Text(
-            'Ushbu xizmat hozircha ishlamaydi. Lekin yaqin orada qo\'shiladi!',
+            loc.t('coming_soon_desc'),
             style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Yopish'),
+            child: Text(loc.t('close')),
           ),
         ],
       ),

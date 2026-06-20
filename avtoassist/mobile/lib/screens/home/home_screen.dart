@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
 import 'package:avtoassist/providers/theme_provider.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
+import 'package:avtoassist/l10n/app_strings.dart';
 import 'package:avtoassist/screens/home/client_home.dart';
 import 'package:avtoassist/screens/home/provider_home.dart';
 import 'package:avtoassist/screens/vehicle/my_vehicle_screen.dart';
@@ -20,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final loc = context.watch<LocaleProvider>();
     final user = authProvider.user;
 
     if (user == null) {
@@ -51,22 +54,22 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (index) => setState(() => _currentIndex = index),
         selectedItemColor: AppTheme.primaryColor,
         type: BottomNavigationBarType.fixed,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Asosiy',
+            icon: const Icon(Icons.home),
+            label: loc.t('nav_home'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt),
-            label: 'So\'rovlar',
+            icon: const Icon(Icons.list_alt),
+            label: loc.t('nav_orders'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.directions_car),
-            label: 'Avtomobil',
+            icon: const Icon(Icons.directions_car),
+            label: loc.t('nav_vehicle'),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profil',
+            icon: const Icon(Icons.person),
+            label: loc.t('nav_profile'),
           ),
         ],
       ),
@@ -80,9 +83,10 @@ class OrdersListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
-      appBar: AppBar(title: const Text('Mening so\'rovlarim')),
-      body: const Center(child: Text('So\'rovlar ro\'yxati')),
+      appBar: AppBar(title: Text(loc.t('my_orders'))),
+      body: Center(child: Text(loc.t('my_orders'))),
     );
   }
 }
@@ -92,9 +96,10 @@ class ProviderOrdersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
-      appBar: AppBar(title: const Text('So\'rovlar')),
-      body: const Center(child: Text('Yangi so\'rovlar')),
+      appBar: AppBar(title: Text(loc.t('new_orders'))),
+      body: Center(child: Text(loc.t('new_orders'))),
     );
   }
 }
@@ -116,11 +121,12 @@ class ProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
     final themeProvider = context.watch<ThemeProvider>();
+    final loc = context.watch<LocaleProvider>();
     final user = authProvider.user;
     final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Profil')),
+      appBar: AppBar(title: Text(loc.t('profile'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -130,19 +136,31 @@ class ProfilePage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(user?.fullName ?? 'Foydalanuvchi', style: AppTheme.heading2),
+                  Text(user?.fullName ?? loc.t('profile'), style: AppTheme.heading2),
                   const SizedBox(height: 8),
                   Text(user?.phone ?? '', style: AppTheme.bodyMedium),
                   const SizedBox(height: 8),
                   Chip(
-                    label: Text(user?.isClient == true ? 'Mijoz' : 'Xizmat ko\'rsatuvchi'),
+                    label: Text(user?.isClient == true ? loc.t('client') : loc.t('provider')),
                   ),
                 ],
               ),
             ),
           ),
           const SizedBox(height: 16),
-          
+
+          // Til tanlash
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.language, color: AppTheme.primaryColor),
+              title: Text(loc.t('language')),
+              subtitle: Text(loc.currentLanguageName),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => _showLanguageDialog(context, loc),
+            ),
+          ),
+          const SizedBox(height: 16),
+
           // Tungi rejim
           Card(
             child: SwitchListTile(
@@ -150,8 +168,8 @@ class ProfilePage extends StatelessWidget {
                 isDark ? Icons.dark_mode : Icons.light_mode,
                 color: AppTheme.primaryColor,
               ),
-              title: const Text('Tungi rejim'),
-              subtitle: Text(isDark ? 'Yoqilgan' : 'O\'chirilgan'),
+              title: Text(loc.t('dark_mode')),
+              subtitle: Text(isDark ? loc.t('on') : loc.t('off')),
               value: isDark,
               onChanged: (value) {
                 themeProvider.toggleTheme();
@@ -159,10 +177,10 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           ListTile(
             leading: const Icon(Icons.logout),
-            title: const Text('Chiqish'),
+            title: Text(loc.t('logout')),
             onTap: () async {
               await authProvider.logout();
               if (context.mounted) {
@@ -172,6 +190,34 @@ class ProfilePage extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context, LocaleProvider loc) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(loc.t('choose_language')),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: AppStrings.languageNames.entries.map((entry) {
+              return RadioListTile<String>(
+                title: Text(entry.value),
+                value: entry.key,
+                groupValue: loc.code,
+                activeColor: AppTheme.primaryColor,
+                onChanged: (value) {
+                  if (value != null) {
+                    loc.setLanguage(value);
+                    Navigator.pop(context);
+                  }
+                },
+              );
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 }

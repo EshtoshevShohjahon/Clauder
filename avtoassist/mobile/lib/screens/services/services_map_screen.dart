@@ -7,6 +7,7 @@ import 'package:avtoassist/providers/places_provider.dart';
 import 'package:avtoassist/services/location_service.dart';
 import 'package:avtoassist/services/offline_map_service.dart';
 import 'package:avtoassist/services/phone_service.dart';
+import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
 /// Xizmat ko'rsatuvchilar xaritasi
@@ -80,6 +81,7 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = context.watch<LocaleProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -97,14 +99,14 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
                         color: AppTheme.accentColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.cloud_off, size: 16, color: Colors.white),
-                          SizedBox(width: 4),
+                          const Icon(Icons.cloud_off, size: 16, color: Colors.white),
+                          const SizedBox(width: 4),
                           Text(
-                            'Offline rejim',
-                            style: TextStyle(
+                            loc.t('offline_mode'),
+                            style: const TextStyle(
                               color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -123,7 +125,6 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
           IconButton(
             icon: Icon(_showList ? Icons.map : Icons.list),
             onPressed: () => setState(() => _showList = !_showList),
-            tooltip: _showList ? 'Xaritada ko\'rish' : 'Ro\'yxatda ko\'rish',
           ),
         ],
       ),
@@ -141,7 +142,7 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
                   const Icon(Icons.error_outline, size: 64, color: Colors.grey),
                   const SizedBox(height: 16),
                   Text(
-                    'Ma\'lumot yuklanmadi',
+                    loc.t('data_not_loaded'),
                     style: AppTheme.heading3,
                   ),
                   const SizedBox(height: 8),
@@ -154,7 +155,7 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
                   ElevatedButton.icon(
                     onPressed: _loadData,
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Qayta urinish'),
+                    label: Text(loc.t('retry')),
                   ),
                 ],
               ),
@@ -218,9 +219,10 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
   }
 
   Widget _buildListView(List<ServicePlace> places) {
+    final loc = context.read<LocaleProvider>();
     if (places.isEmpty) {
-      return const Center(
-        child: Text('Xizmat ko\'rsatuvchilar topilmadi'),
+      return Center(
+        child: Text(loc.t('providers_not_found')),
       );
     }
 
@@ -300,7 +302,7 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
                     child: OutlinedButton.icon(
                       onPressed: () => _phoneService.makePhoneCall(place.phone),
                       icon: const Icon(Icons.phone, size: 18),
-                      label: const Text('Qo\'ng\'iroq'),
+                      label: Text(context.read<LocaleProvider>().t('call')),
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -314,7 +316,7 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
                         });
                       },
                       icon: const Icon(Icons.map, size: 18),
-                      label: const Text('Xaritada'),
+                      label: Text(context.read<LocaleProvider>().t('in_map')),
                     ),
                   ),
                 ],
@@ -386,7 +388,7 @@ class _ServicesMapScreenState extends State<ServicesMapScreen> {
                         );
                       },
                       icon: const Icon(Icons.phone),
-                      label: const Text('Qo\'ng\'iroq qilish'),
+                      label: Text(context.read<LocaleProvider>().t('call_action')),
                     ),
                   ),
                 ],
