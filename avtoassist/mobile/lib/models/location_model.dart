@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 class LocationCoordinates {
   final double latitude;
   final double longitude;
@@ -46,23 +48,24 @@ class LocationCoordinates {
 
   // Ikkita koordinata orasidagi masofa (km, Haversine formula)
   double distanceTo(LocationCoordinates other) {
-    const earthRadius = 6371; // km
-    
+    const double earthRadius = 6371; // km
+
     final dLat = _toRadians(other.latitude - latitude);
     final dLon = _toRadians(other.longitude - longitude);
-    
-    final a = 
-        (dLat / 2).sin() * (dLat / 2).sin() +
-        _toRadians(latitude).cos() * _toRadians(other.latitude).cos() *
-        (dLon / 2).sin() * (dLon / 2).sin();
-    
-    final c = 2 * a.sqrt().asin();
-    
+
+    final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+        math.cos(_toRadians(latitude)) *
+            math.cos(_toRadians(other.latitude)) *
+            math.sin(dLon / 2) *
+            math.sin(dLon / 2);
+
+    final c = 2 * math.asin(math.sqrt(a));
+
     return earthRadius * c;
   }
 
   double _toRadians(double degrees) {
-    return degrees * (3.14159265359 / 180);
+    return degrees * (math.pi / 180);
   }
 
   @override

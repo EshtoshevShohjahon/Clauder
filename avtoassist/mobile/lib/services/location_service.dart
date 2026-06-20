@@ -79,10 +79,8 @@ class LocationService {
       // Joylashuvni olish - SATELLITE'DAN!
       // Internet yo'q bo'lsa ham ishlaydi
       final position = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(
-          accuracy: accuracy,
-          timeLimit: const Duration(seconds: 30),
-        ),
+        desiredAccuracy: accuracy,
+        timeLimit: const Duration(seconds: 30),
       );
 
       _lastKnownPosition = position;
