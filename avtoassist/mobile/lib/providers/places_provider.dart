@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'dart:math' show sin, cos, sqrt, asin;
 import 'package:avtoassist/models/service_place_model.dart';
 import 'package:avtoassist/services/api_service.dart';
 
