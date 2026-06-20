@@ -170,4 +170,51 @@ class AuthProvider extends ChangeNotifier {
       return false;
     }
   }
+
+  /// Parolni tiklash - SMS kod so'rash
+  /// Qaytaradi: dev rejimda {dev_code: ...}, aks holda {} (muvaffaqiyat), null (xato)
+  Future<Map<String, dynamic>?> forgotPassword(String phone) async {
+    _error = null;
+    try {
+      final response = await _api.post(
+        AppConstants.authForgotPassword,
+        body: {'phone': phone},
+      );
+      if (response['success'] == true) {
+        return response['dev_code'] != null
+            ? {'dev_code': response['dev_code'].toString()}
+            : {};
+      }
+      _error = response['message'];
+      return null;
+    } catch (e) {
+      _error = e.toString().replaceFirst('Exception: ', '');
+      return null;
+    }
+  }
+
+  /// Parolni tiklash - kod + yangi parol
+  Future<bool> resetPassword({
+    required String phone,
+    required String code,
+    required String newPassword,
+  }) async {
+    _error = null;
+    try {
+      final response = await _api.post(
+        AppConstants.authResetPassword,
+        body: {
+          'phone': phone,
+          'code': code,
+          'new_password': newPassword,
+        },
+      );
+      if (response['success'] == true) return true;
+      _error = response['message'];
+      return false;
+    } catch (e) {
+      _error = e.toString().replaceFirst('Exception: ', '');
+      return false;
+    }
+  }
 }

@@ -19,6 +19,8 @@ class AppConstants {
   static const String authLogin = '/auth/login';
   static const String authVerifyPhone = '/auth/verify-phone';
   static const String authSelectRole = '/auth/select-role';
+  static const String authForgotPassword = '/auth/forgot-password';
+  static const String authResetPassword = '/auth/reset-password';
   
   static const String ordersCreate = '/orders';
   static const String ordersGet = '/orders';

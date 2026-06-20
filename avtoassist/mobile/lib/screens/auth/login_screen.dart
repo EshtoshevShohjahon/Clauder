@@ -4,6 +4,7 @@ import 'package:avtoassist/providers/auth_provider.dart';
 import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/services/api_service.dart';
 import 'package:avtoassist/screens/auth/register_screen.dart';
+import 'package:avtoassist/screens/auth/forgot_password_screen.dart';
 import 'package:avtoassist/screens/home/home_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
@@ -212,6 +213,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
+                
+                // Parolni unutdingizmi?
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const ForgotPasswordScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(loc.t('forgot_password')),
+                ),
                 
                 // Register link
                 TextButton(

@@ -14,4 +14,10 @@ router.post('/verify-phone', authController.verifyPhone);
 // POST /api/auth/select-role - Rol tanlash (client/provider)
 router.post('/select-role', authController.selectRole);
 
+// POST /api/auth/forgot-password - Parolni tiklash kodini so'rash (SMS)
+router.post('/forgot-password', authController.forgotPassword);
+
+// POST /api/auth/reset-password - Kodni tasdiqlab yangi parol o'rnatish
+router.post('/reset-password', authController.resetPassword);
+
 module.exports = router;

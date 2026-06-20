@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const db = require('../config/database');
 const { generateToken } = require('../config/jwt');
+const { sendSms } = require('../utils/smsService');
 
 /**
  * Ro'yxatdan o'tish
@@ -274,9 +275,90 @@ async function selectRole(req, res) {
   }
 }
 
+/**
+ * Parolni tiklash - kod so'rash (SMS)
+ * POST /api/auth/forgot-password
+ */
+async function forgotPassword(req, res) {
+  try {
+    const { phone } = req.body;
+    if (!phone) {
+      return res.status(400).json({ success: false, message: 'Telefon raqam majburiy' });
+    }
+
+    const userRes = await db.query('SELECT id FROM users WHERE phone = $1', [phone]);
+    if (userRes.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Bunday foydalanuvchi topilmadi' });
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires = new Date(Date.now() + 10 * 60 * 1000); // 10 daqiqa
+
+    await db.query(
+      'UPDATE users SET reset_code = $1, reset_code_expires = $2 WHERE phone = $3',
+      [code, expires, phone]
+    );
+
+    const sms = await sendSms(phone, `AvtoHelp: parolni tiklash kodi - ${code}`);
+
+    const resp = { success: true, message: 'Tasdiqlash kodi yuborildi' };
+    // SMS provider sozlanmagan bo'lsa - test uchun kodni qaytaramiz
+    if (sms.dev) resp.dev_code = code;
+    res.json(resp);
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ success: false, message: 'Server xatosi' });
+  }
+}
+
+/**
+ * Parolni tiklash - kodni tasdiqlab yangi parol o'rnatish
+ * POST /api/auth/reset-password
+ */
+async function resetPassword(req, res) {
+  try {
+    const { phone, code, new_password } = req.body;
+    if (!phone || !code || !new_password) {
+      return res.status(400).json({ success: false, message: 'Barcha maydonlar majburiy' });
+    }
+    if (new_password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Parol kamida 6 belgidan iborat bo\'lishi kerak' });
+    }
+
+    const userRes = await db.query(
+      'SELECT reset_code, reset_code_expires FROM users WHERE phone = $1',
+      [phone]
+    );
+    if (userRes.rows.length === 0) {
+      return res.status(404).json({ success: false, message: 'Foydalanuvchi topilmadi' });
+    }
+
+    const u = userRes.rows[0];
+    if (!u.reset_code || u.reset_code !== code) {
+      return res.status(400).json({ success: false, message: 'Kod noto\'g\'ri' });
+    }
+    if (new Date(u.reset_code_expires) < new Date()) {
+      return res.status(400).json({ success: false, message: 'Kod muddati tugagan' });
+    }
+
+    const hashed = await bcrypt.hash(new_password, 10);
+    await db.query(
+      'UPDATE users SET password_hash = $1, reset_code = NULL, reset_code_expires = NULL WHERE phone = $2',
+      [hashed, phone]
+    );
+
+    res.json({ success: true, message: 'Parol yangilandi' });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({ success: false, message: 'Server xatosi' });
+  }
+}
+
 module.exports = {
   register,
   login,
   verifyPhone,
   selectRole,
+  forgotPassword,
+  resetPassword,
 };
