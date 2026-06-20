@@ -2,22 +2,25 @@ name: Build Android APK
 
 on:
   push:
+    branches: [ main, feature/* ]
+  pull_request:
     branches: [ main ]
-    paths:
-      - 'avtoassist/mobile/**'
   workflow_dispatch:
 
 jobs:
   build:
     name: Build APK
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Setup Java
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -25,8 +28,9 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.6'
+          flutter-version: '3.24.0'
           channel: 'stable'
+          cache: true
       
       - name: Flutter Doctor
         working-directory: ./avtoassist/mobile
@@ -40,31 +44,60 @@ jobs:
           flutter clean
           flutter pub get
       
-      - name: Analyze
+      - name: Check for Dart/Flutter errors
         working-directory: ./avtoassist/mobile
-        run: flutter analyze || true
+        run: |
+          echo "Running Flutter analyze..."
+          flutter analyze --no-fatal-infos --no-fatal-warnings || echo "Analysis complete with warnings"
       
-      - name: Build APK
+      - name: Build APK (Release)
         working-directory: ./avtoassist/mobile
-        run: flutter build apk --release --no-tree-shake-icons
+        run: |
+          echo "Building APK..."
+          flutter build apk --release --verbose
+      
+      - name: Verify APK exists
+        run: |
+          if [ ! -f "avtoassist/mobile/build/app/outputs/flutter-apk/app-release.apk" ]; then
+            echo "ERROR: APK file not found!"
+            exit 1
+          fi
+          echo "APK found successfully"
+          ls -lh avtoassist/mobile/build/app/outputs/flutter-apk/
       
       - name: Rename APK
         run: |
           cp avtoassist/mobile/build/app/outputs/flutter-apk/app-release.apk \
              avtohelp-v${{ github.run_number }}.apk
+          ls -lh avtohelp-v${{ github.run_number }}.apk
       
-      - name: Upload APK
+      - name: Upload APK as Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: avtohelp-apk
+          name: avtohelp-apk-${{ github.run_number }}
           path: avtohelp-v${{ github.run_number }}.apk
+          retention-days: 30
       
       - name: Create Release
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.0.${{ github.run_number }}
           name: AvtoHelp v1.0.${{ github.run_number }}
+          body: |
+            ## AvtoHelp Mobile App - Release v1.0.${{ github.run_number }}
+            
+            ### 📱 APK Download
+            Download the APK file below to install on Android devices.
+            
+            ### ✨ Features
+            - Offline maps (OpenStreetMap)
+            - GPS without internet
+            - 27+ service providers
+            - Phone call integration
+            
+            ### 📋 Changelog
+            See commit history for detailed changes.
           files: avtohelp-v${{ github.run_number }}.apk
           draft: false
           prerelease: false
