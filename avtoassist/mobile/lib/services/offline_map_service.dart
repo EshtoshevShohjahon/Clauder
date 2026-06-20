@@ -11,11 +11,12 @@ class OfflineMapService {
   factory OfflineMapService() => _instance;
   OfflineMapService._internal();
 
-  /// OpenStreetMap tile URL
-  /// Bu tile'lar avtomatik ravishda cache qilinadi
-  static const String osmTileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
-  
-  /// User agent (OSM requirements)
+  /// Google Maps tile serveri (web mercator - flutter_map bilan mos)
+  /// lyrs=m: oddiy xarita, lyrs=s: sun'iy yo'ldosh, lyrs=y: gibrid
+  /// Bu tile'lar avtomatik ravishda cache qilinadi (offline ishlaydi)
+  static const String osmTileUrl = 'https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}';
+
+  /// User agent (tile server requirements)
   static const String userAgent = 'AvtoHelp/1.0';
 
   /// Default xarita markazi (Toshkent)
