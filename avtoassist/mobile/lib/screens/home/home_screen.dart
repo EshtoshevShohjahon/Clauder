@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
+import 'package:avtoassist/providers/theme_provider.dart';
 import 'package:avtoassist/screens/home/client_home.dart';
 import 'package:avtoassist/screens/home/provider_home.dart';
 import 'package:avtoassist/screens/vehicle/my_vehicle_screen.dart';
@@ -114,7 +115,9 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
+    final themeProvider = context.watch<ThemeProvider>();
     final user = authProvider.user;
+    final isDark = themeProvider.isDarkMode;
 
     return Scaffold(
       appBar: AppBar(title: const Text('Profil')),
@@ -139,6 +142,24 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
+          
+          // Tungi rejim
+          Card(
+            child: SwitchListTile(
+              secondary: Icon(
+                isDark ? Icons.dark_mode : Icons.light_mode,
+                color: AppTheme.primaryColor,
+              ),
+              title: const Text('Tungi rejim'),
+              subtitle: Text(isDark ? 'Yoqilgan' : 'O\'chirilgan'),
+              value: isDark,
+              onChanged: (value) {
+                themeProvider.toggleTheme();
+              },
+            ),
+          ),
+          const SizedBox(height: 16),
+          
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Chiqish'),

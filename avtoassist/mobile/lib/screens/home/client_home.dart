@@ -10,7 +10,7 @@ class ClientHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AvtoAssist'),
+        title: const Text('AvtoHelp'),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),

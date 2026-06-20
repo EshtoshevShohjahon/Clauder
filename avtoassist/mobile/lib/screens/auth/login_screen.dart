@@ -79,13 +79,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'AvtoAssist',
+                  'AvtoHelp',
                   style: AppTheme.heading1,
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Avtomobil xizmatlari bir joyda',
+                  'Avtomobil yordamchisi',
                   style: AppTheme.bodyMedium.copyWith(
                     color: AppTheme.textSecondary,
                   ),

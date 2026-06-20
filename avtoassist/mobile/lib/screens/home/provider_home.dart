@@ -15,7 +15,7 @@ class _ProviderHomePageState extends State<ProviderHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AvtoAssist Provider'),
+        title: const Text('AvtoHelp Provider'),
         actions: [
           IconButton(
             icon: const Icon(Icons.notifications_outlined),

@@ -64,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 24),
             const Text(
-              'AvtoAssist',
+              'AvtoHelp',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -73,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Avtomobil xizmatlari bir joyda',
+              'Avtomobil yordamchisi',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.white70,
