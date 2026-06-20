@@ -1,0 +1,31 @@
+workflows:
+  android-apk:
+    name: AvtoHelp Android APK
+    max_build_duration: 60
+    instance_type: linux_x2
+    environment:
+      flutter: 3.24.0
+      java: 17
+    scripts:
+      - name: Flutter versiyasini ko'rsatish
+        script: |
+          flutter --version
+      - name: Bog'liqliklarni o'rnatish (pub get)
+        script: |
+          cd avtoassist/mobile
+          flutter pub get
+      - name: Kodni tahlil qilish (xato bo'lsa to'xtamaydi)
+        script: |
+          cd avtoassist/mobile
+          flutter analyze || true
+      - name: APK qurish (release)
+        script: |
+          cd avtoassist/mobile
+          flutter build apk --release
+    artifacts:
+      - avtoassist/mobile/build/app/outputs/flutter-apk/*.apk
+    # Ixtiyoriy: APK ni emailga yuborish uchun pastdagi qatorlarni yoqing
+    # publishing:
+    #   email:
+    #     recipients:
+    #       - sizning@email.com
