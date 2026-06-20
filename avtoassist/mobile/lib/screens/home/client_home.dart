@@ -5,6 +5,7 @@ import 'package:avtoassist/providers/locale_provider.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 import 'package:avtoassist/utils/constants.dart';
 import 'package:avtoassist/screens/services/services_map_screen.dart';
+import 'package:avtoassist/screens/services/searching_screen.dart';
 
 class ClientHomePage extends StatelessWidget {
   const ClientHomePage({super.key});
@@ -151,7 +152,13 @@ class ClientHomePage extends StatelessWidget {
         ),
       );
     } else {
-      _showOrderDialog(context, serviceId, serviceName);
+      // Map'siz xizmatlar -> usta qidirish (radar) ekrani
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SearchingScreen(serviceName: serviceName),
+        ),
+      );
     }
   }
 
