@@ -50,11 +50,21 @@ class ApiService {
         url,
         headers: _getHeaders(needsAuth: needsAuth),
         body: body != null ? jsonEncode(body) : null,
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw Exception('Vaqt tugadi. Internetni tekshiring.');
+        },
       );
 
       return _handleResponse(response);
+    } on http.ClientException {
+      throw Exception('Internet aloqasi yo\'q');
     } catch (e) {
-      throw Exception('Tarmoq xatosi: $e');
+      if (e.toString().contains('Exception')) {
+        rethrow;
+      }
+      throw Exception('Tarmoq xatosi: Iltimos qaytadan urinib ko\'ring');
     }
   }
 
@@ -72,11 +82,21 @@ class ApiService {
       final response = await http.get(
         url,
         headers: _getHeaders(needsAuth: needsAuth),
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw Exception('Vaqt tugadi. Internetni tekshiring.');
+        },
       );
 
       return _handleResponse(response);
+    } on http.ClientException {
+      throw Exception('Internet aloqasi yo\'q');
     } catch (e) {
-      throw Exception('Tarmoq xatosi: $e');
+      if (e.toString().contains('Exception')) {
+        rethrow;
+      }
+      throw Exception('Tarmoq xatosi: Iltimos qaytadan urinib ko\'ring');
     }
   }
 

@@ -1,7 +1,7 @@
 class AppConstants {
   // API Configuration
-  static const String baseUrl = 'http://localhost:3000/api';
-  static const String wsUrl = 'ws://localhost:3000';
+  static const String baseUrl = 'http://10.0.2.2:3000/api'; // Android emulator uchun
+  static const String wsUrl = 'ws://10.0.2.2:3000';
   
   // Production URLs (o'zgartiring)
   // static const String baseUrl = 'https://api.avtoassist.uz/api';
@@ -34,13 +34,56 @@ class AppConstants {
   static const String keyUserRole = 'user_role';
   static const String keyUserPhone = 'user_phone';
   
-  // Service Types
-  static const String serviceMechanic = 'mechanic';
-  static const String serviceFuelDelivery = 'fuel_delivery';
-  static const String serviceCarWash = 'car_wash';
-  static const String servicePartsSeller = 'parts_seller';
-  static const String serviceWorkshop = 'workshop';
-  static const String serviceTowTruck = 'tow_truck';
+  // Service Types with map support
+  static const List<Map<String, dynamic>> services = [
+    {
+      'id': 'mechanic',
+      'name': 'Mexanik',
+      'icon': Icons.build,
+      'has_map': false,
+    },
+    {
+      'id': 'fuel_delivery',
+      'name': 'Yoqilg\'i yetkazish',
+      'icon': Icons.local_gas_station,
+      'has_map': false,
+    },
+    {
+      'id': 'car_wash',
+      'name': 'Avto yuvish',
+      'icon': Icons.local_car_wash,
+      'has_map': true,
+      'place_type': 'car_wash',
+    },
+    {
+      'id': 'auto_parts',
+      'name': 'Ehtiyot qismlar',
+      'icon': Icons.settings,
+      'has_map': true,
+      'place_type': 'auto_parts',
+    },
+    {
+      'id': 'workshop',
+      'name': 'Ustaxona',
+      'icon': Icons.home_repair_service,
+      'has_map': true,
+      'place_type': 'workshop',
+    },
+    {
+      'id': 'evacuator',
+      'name': 'Evakuator',
+      'icon': Icons.local_shipping,
+      'has_map': true,
+      'place_type': 'evacuator',
+    },
+    {
+      'id': 'gas_stations',
+      'name': 'Yoqilg\'i shoxoblari',
+      'icon': Icons.local_gas_station,
+      'has_map': true,
+      'place_type': 'gas_station',
+    },
+  ];
   
   // Order Status
   static const String statusPending = 'pending';

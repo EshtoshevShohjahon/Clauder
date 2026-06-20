@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 import 'package:avtoassist/utils/app_icons.dart';
 import 'package:avtoassist/utils/constants.dart';
+import 'package:avtoassist/screens/services/services_map_screen.dart';
 
 class ClientHomePage extends StatelessWidget {
   const ClientHomePage({super.key});
@@ -47,64 +48,83 @@ class ClientHomePage extends StatelessWidget {
           // Services grid
           const Text('Xizmatlar', style: AppTheme.heading3),
           const SizedBox(height: 16),
-          GridView.count(
+          GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.2,
-            children: [
-              _ServiceCard(
-                icon: AppIcons.mechanic,
-                title: 'Texnik yordam',
-                color: Colors.blue,
-                onTap: () => _showOrderDialog(context, AppConstants.serviceMechanic),
-              ),
-              _ServiceCard(
-                icon: AppIcons.fuelDelivery,
-                title: 'Yoqilg\'i quyish',
-                color: Colors.orange,
-                onTap: () => _showOrderDialog(context, AppConstants.serviceFuelDelivery),
-              ),
-              _ServiceCard(
-                icon: AppIcons.carWash,
-                title: 'Avtoyuv',
-                color: Colors.cyan,
-                onTap: () => _showOrderDialog(context, AppConstants.serviceCarWash),
-              ),
-              _ServiceCard(
-                icon: AppIcons.towTruck,
-                title: 'Evakuator',
-                color: Colors.red,
-                onTap: () => _showOrderDialog(context, AppConstants.serviceTowTruck),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          
-          // Catalog section
-          const Text('Kataloglar', style: AppTheme.heading3),
-          const SizedBox(height: 16),
-          _CatalogCard(
-            icon: AppIcons.partsSeller,
-            title: 'Ehtiyot qismlar',
-            subtitle: 'Do\'konlar va narxlar',
-            onTap: () {},
-          ),
-          const SizedBox(height: 12),
-          _CatalogCard(
-            icon: AppIcons.workshop,
-            title: 'Ustaxonalar',
-            subtitle: 'Yaqin atrofdagi servislar',
-            onTap: () {},
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              mainAxisSpacing: 12,
+              crossAxisSpacing: 12,
+              childAspectRatio: 1.2,
+            ),
+            itemCount: AppConstants.services.length,
+            itemBuilder: (context, index) {
+              final service = AppConstants.services[index];
+              return _ServiceCard(
+                icon: service['icon'] as IconData,
+                title: service['name'] as String,
+                color: _getServiceColor(service['id'] as String),
+                onTap: () => _handleServiceTap(
+                  context,
+                  service['id'] as String,
+                  service['name'] as String,
+                  service['has_map'] as bool,
+                  service['place_type'] as String?,
+                ),
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  void _showOrderDialog(BuildContext context, String serviceType) {
+  Color _getServiceColor(String serviceId) {
+    switch (serviceId) {
+      case 'mechanic':
+        return Colors.blue;
+      case 'fuel_delivery':
+        return Colors.orange;
+      case 'car_wash':
+        return Colors.cyan;
+      case 'evacuator':
+        return Colors.red;
+      case 'workshop':
+        return Colors.green;
+      case 'auto_parts':
+        return Colors.brown;
+      case 'gas_stations':
+        return Colors.deepOrange;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  void _handleServiceTap(
+    BuildContext context,
+    String serviceId,
+    String serviceName,
+    bool hasMap,
+    String? placeType,
+  ) {
+    if (hasMap && placeType != null) {
+      // Xarita bilan xizmatlar
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ServicesMapScreen(
+            serviceType: placeType,
+            title: serviceName,
+          ),
+        ),
+      );
+    } else {
+      // Oddiy so'rov xizmatlari
+      _showOrderDialog(context, serviceId, serviceName);
+    }
+  }
+
+  void _showOrderDialog(BuildContext context, String serviceType, String serviceName) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -115,7 +135,10 @@ class ClientHomePage extends StatelessWidget {
         padding: EdgeInsets.only(
           bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        child: OrderFormSheet(serviceType: serviceType),
+        child: OrderFormSheet(
+          serviceType: serviceType,
+          serviceName: serviceName,
+        ),
       ),
     );
   }
@@ -207,8 +230,13 @@ class _CatalogCard extends StatelessWidget {
 
 class OrderFormSheet extends StatefulWidget {
   final String serviceType;
+  final String serviceName;
 
-  const OrderFormSheet({super.key, required this.serviceType});
+  const OrderFormSheet({
+    super.key,
+    required this.serviceType,
+    required this.serviceName,
+  });
 
   @override
   State<OrderFormSheet> createState() => _OrderFormSheetState();
@@ -232,33 +260,43 @@ class _OrderFormSheetState extends State<OrderFormSheet> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            AppIcons.getServiceName(widget.serviceType),
+            widget.serviceName,
             style: AppTheme.heading2,
           ),
-          const SizedBox(height: 24),
-          TextField(
-            controller: _descriptionController,
-            decoration: const InputDecoration(
-              labelText: 'Muammo tavsifi (ixtiyoriy)',
-              hintText: 'Masalan: Dvigatel ishlamayapti',
-            ),
-            maxLines: 3,
-          ),
-          const SizedBox(height: 24),
-          ElevatedButton(
-            onPressed: () {
-              // TODO: Create order
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('So\'rov yaratildi')),
-              );
-            },
-            child: const Text('So\'rov yuborish'),
-          ),
           const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.amber.shade50,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.amber.shade200),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.info_outline, color: Colors.amber.shade700),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'Tez orada!',
+                    style: AppTheme.bodyMedium.copyWith(
+                      color: Colors.amber.shade900,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Ushbu xizmat hozircha ishlamaydi. Lekin yaqin orada qo\'shiladi!',
+            style: AppTheme.bodyMedium.copyWith(color: AppTheme.textSecondary),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Bekor qilish'),
+            child: const Text('Yopish'),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:avtoassist/providers/auth_provider.dart';
 import 'package:avtoassist/providers/order_provider.dart';
 import 'package:avtoassist/providers/theme_provider.dart';
+import 'package:avtoassist/providers/places_provider.dart';
 import 'package:avtoassist/screens/splash_screen.dart';
 import 'package:avtoassist/utils/app_theme.dart';
 
@@ -20,6 +21,7 @@ class AvtoHelpApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => OrderProvider()),
+        ChangeNotifierProvider(create: (_) => PlacesProvider()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, _) {

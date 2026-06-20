@@ -10,10 +10,36 @@ async function register(req, res) {
   try {
     const { phone, password, full_name } = req.body;
 
+    // Validation
     if (!phone || !password) {
       return res.status(400).json({ 
         success: false, 
         message: 'Telefon raqam va parol majburiy' 
+      });
+    }
+
+    // Phone format validation (O'zbekiston formati: +998XXXXXXXXX)
+    const phoneRegex = /^\+998[0-9]{9}$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Telefon raqam formati noto\'g\'ri. Namuna: +998901234567' 
+      });
+    }
+
+    // Password validation
+    if (password.length < 6) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Parol kamida 6 belgidan iborat bo\'lishi kerak' 
+      });
+    }
+
+    // Full name validation
+    if (full_name && (full_name.length < 3 || full_name.length > 100)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Ism 3-100 belgi orasida bo\'lishi kerak' 
       });
     }
 
