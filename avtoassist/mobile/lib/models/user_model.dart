@@ -31,18 +31,20 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] as int,
-      phone: json['phone'] as String,
+      id: (json['id'] as num?)?.toInt() ?? 0,
+      phone: json['phone'] as String? ?? '',
       fullName: json['full_name'] as String?,
-      role: json['role'] as String,
+      role: json['role'] as String? ?? 'client',
       phoneVerified: json['phone_verified'] as bool? ?? false,
-      createdAt: DateTime.parse(json['created_at'] as String),
-      providerId: json['provider_id'] as int?,
+      createdAt: json['created_at'] != null
+          ? DateTime.tryParse(json['created_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      providerId: (json['provider_id'] as num?)?.toInt(),
       serviceType: json['service_type'] as String?,
       businessName: json['business_name'] as String?,
       isAvailable: json['is_available'] as bool?,
       rating: json['rating'] != null ? (json['rating'] as num).toDouble() : null,
-      totalOrders: json['total_orders'] as int?,
+      totalOrders: (json['total_orders'] as num?)?.toInt(),
     );
   }
 
