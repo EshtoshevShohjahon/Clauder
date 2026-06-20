@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppConstants {
   // API Configuration
-  static const String baseUrl = 'http://172.25.192.1:3000/api'; // Kompyuter IP (real qurilma uchun)
-  static const String wsUrl = 'ws://172.25.192.1:3000';
+  static const String baseUrl = 'http://10.101.130.41:3000/api'; // Kompyuter Wi-Fi IP (real qurilma uchun)
+  static const String wsUrl = 'ws://10.101.130.41:3000';
 
   // Android emulator uchun:
   // static const String baseUrl = 'http://10.0.2.2:3000/api';
